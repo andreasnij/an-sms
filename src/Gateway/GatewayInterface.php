@@ -1,0 +1,47 @@
+<?php declare(strict_types=1);
+
+/**
+ * An SMS library.
+ *
+ * @copyright Copyright (c) 2017 Andreas Nilsson
+ * @license   MIT
+ */
+
+namespace AnSms\Gateway;
+
+use AnSms\Exception\ReceiveException;
+use AnSms\Exception\SendException;
+use AnSms\Message\MessageInterface;
+use AnSms\Message\DeliveryReport\DeliveryReportInterface;
+
+/**
+ * @author Andreas Nilsson <http://github.com/jandreasn>
+ */
+interface GatewayInterface
+{
+    /**
+     * @param MessageInterface $message
+     * @throws SendException
+     */
+    public function sendMessage(MessageInterface $message): void;
+
+    /**
+     * @param MessageInterface[] $messages
+     * @throws SendException
+     */
+    public function sendMessages(array $messages): void;
+
+    /**
+     * @param array $data
+     * @throws ReceiveException
+     * @return MessageInterface
+     */
+    public function receiveMessage(array $data): MessageInterface;
+
+    /**
+     * @param array $data
+     * @throws ReceiveException
+     * @return DeliveryReportInterface
+     */
+    public function receiveDeliveryReport(array $data): DeliveryReportInterface;
+}
