@@ -7,7 +7,7 @@ An extendable library for sending and receiving SMS messages. Currently comes pa
  
 - [Cellsynt](https://www.cellsynt.com)
 
-You can easily add your own. Work in progress. Do no use (yet).
+You can add and use your own gateway provider. This library enables easy switching between different gateways.
 
 
 ## Installation
