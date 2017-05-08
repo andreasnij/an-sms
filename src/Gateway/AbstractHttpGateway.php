@@ -37,7 +37,6 @@ abstract class AbstractHttpGateway
      */
     public function __construct(HttpClient $httpClient = null, MessageFactory $messageFactory = null)
     {
-
         $this->httpClient = $httpClient ?: HttpClientDiscovery::find();
         $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
     }
