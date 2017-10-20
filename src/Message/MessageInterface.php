@@ -32,7 +32,7 @@ interface MessageInterface
 
     public function getLogContext(): array;
 
-    public function setId(string $trackingId): void;
+    public function setId(string $id): void;
 
     public function getId(): ?string;
 
