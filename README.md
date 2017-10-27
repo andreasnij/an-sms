@@ -5,7 +5,8 @@
 
 An extendable library for sending and receiving SMS messages. Currently comes packaged with these gateway providers:
  
-- [Cellsynt](https://www.cellsynt.com)
+- [Cellsynt](https://www.cellsynt.com) (supports: sending, premium, receiving, delivery reports)
+- [Telenor SMS Pro](https://www.smspro.se/) (supports: sending, delivery reports)
 
 You can add and use your own gateway provider. This library enables easy switching between different gateways.
 
