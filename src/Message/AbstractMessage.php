@@ -71,7 +71,7 @@ abstract class AbstractMessage implements MessageInterface
     public function setText(string $text): void
     {
         if (empty($text) || mb_strlen($text) > 160) {
-            throw new \InvalidArgumentException('Text can not be more than 160 characters long');
+            throw new \InvalidArgumentException('Text is required and can not be more than 160 characters long');
         }
 
         $this->text = $text;

@@ -31,7 +31,6 @@ class NullGateway implements GatewayInterface
      */
     public function sendMessage(MessageInterface $message): void
     {
-        $message->setId('Null gateway tracking id');
     }
 
     /**
@@ -40,9 +39,6 @@ class NullGateway implements GatewayInterface
      */
     public function sendMessages(array $messages): void
     {
-        foreach ($messages as $message) {
-             $message->setId('Null gateway tracking id');
-        }
     }
 
     /**
@@ -53,9 +49,8 @@ class NullGateway implements GatewayInterface
     public function receiveMessage($data): MessageInterface
     {
         return Message::create(
-            $data['destination'] ?? '46700112233',
-            $data['text'] ?? 'Null gateway text',
-            $data['originator'] ?? '46700123456'
+            $data['to'] ?? '46700000000',
+            $data['text'] ?? '-'
         );
     }
 
@@ -67,8 +62,8 @@ class NullGateway implements GatewayInterface
     public function receiveDeliveryReport($data): DeliveryReportInterface
     {
         return new DeliveryReport(
-            $data['trackingid'] ?? 'Null gateway tracking id',
-            $data['status'] ??  'Null gateway status'
+            $data['trackingid'] ?? '',
+            $data['status'] ??  ''
         );
     }
 }
