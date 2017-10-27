@@ -194,7 +194,7 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
      * @throws ReceiveException
      * @return MessageInterface
      */
-    public function receiveMessage(array $data): MessageInterface
+    public function receiveMessage($data): MessageInterface
     {
         if (isset($data['sessionid'])) {
             return $this->receivePremiumSmsMessage($data);
@@ -214,7 +214,7 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
      * @throws ReceiveException
      * @return MessageInterface
      */
-    protected function receiveSmsMessage(array $data): MessageInterface
+    protected function receiveSmsMessage($data): MessageInterface
     {
         if (empty($data['text']) || empty($data['destination']) || empty($data['originator'])) {
             throw new ReceiveException(sprintf(
@@ -246,7 +246,7 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
      * @throws ReceiveException
      * @return MessageInterface
      */
-    public function receivePremiumSmsMessage(array $data): MessageInterface
+    public function receivePremiumSmsMessage($data): MessageInterface
     {
         if (empty($data['country']) || empty($data['operator']) || empty($data['shortcode'])
              || empty($data['sender']) || empty($data['text']) || empty($data['sessionid'])
@@ -280,7 +280,7 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
      * @throws ReceiveException
      * @return DeliveryReportInterface
      */
-    public function receiveDeliveryReport(array $data): DeliveryReportInterface
+    public function receiveDeliveryReport($data): DeliveryReportInterface
     {
         if (empty($data['trackingid']) || empty($data['status'])) {
             throw new ReceiveException(sprintf(

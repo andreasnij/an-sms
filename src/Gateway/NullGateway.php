@@ -50,7 +50,7 @@ class NullGateway implements GatewayInterface
      * @throws ReceiveException
      * @return MessageInterface
      */
-    public function receiveMessage(array $data): MessageInterface
+    public function receiveMessage($data): MessageInterface
     {
         return Message::create(
             $data['destination'] ?? '46700112233',
@@ -64,7 +64,7 @@ class NullGateway implements GatewayInterface
      * @throws ReceiveException
      * @return DeliveryReportInterface
      */
-    public function receiveDeliveryReport(array $data): DeliveryReportInterface
+    public function receiveDeliveryReport($data): DeliveryReportInterface
     {
         return new DeliveryReport(
             $data['trackingid'] ?? 'Null gateway tracking id',

@@ -32,16 +32,16 @@ interface GatewayInterface
     public function sendMessages(array $messages): void;
 
     /**
-     * @param array $data
+     * @param mixed $data
      * @throws ReceiveException
      * @return MessageInterface
      */
-    public function receiveMessage(array $data): MessageInterface;
+    public function receiveMessage($data): MessageInterface;
 
     /**
-     * @param array $data
+     * @param mixed $data
      * @throws ReceiveException
      * @return DeliveryReportInterface
      */
-    public function receiveDeliveryReport(array $data): DeliveryReportInterface;
+    public function receiveDeliveryReport($data): DeliveryReportInterface;
 }
