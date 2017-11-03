@@ -26,6 +26,8 @@ use Http\Message\MessageFactory;
 use DOMDocument;
 
 /**
+ * Telenor SMS Pro SMS gateway provider.
+ *
  * @author Andreas Nilsson <http://github.com/jandreasn>
  */
 class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
@@ -129,7 +131,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
             $header->appendChild($xml->createElement('request_id', $messageId));
         }
         if (($xmlChild = $this->getMessageFromXmlChild($message, $xml))) {
-            $header->appendChild($xml->createElement('from_alphanumeric', utf8_decode((string) $message->getFrom())));
+            $header->appendChild($xml->createElement('from_alphanumeric', (string) $message->getFrom()));
         }
         if ($this->supplementaryInformation !== null) {
             $header->appendChild($xml->createElement('sub_id_1', $this->supplementaryInformation));
@@ -139,7 +141,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
         $payload = $xml->createElement('payload');
         $sms = $xml->createElement('sms');
         $sms->appendChild(($messageElement = $xml->createElement('message')));
-        $messageElement->appendChild($xml->createCDATASection(utf8_decode($message->getText())));
+        $messageElement->appendChild($xml->createCDATASection($message->getText()));
         $sms->appendChild($xml->createElement('to_msisdn', (string) $message->getTo()));
         $payload->appendChild($sms);
         $mobileCtrlSms->appendChild($payload);
@@ -158,7 +160,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
         if ($message->getFrom() instanceof PhoneNumber) {
             return $xmlDocument->createElement('from_msisdn', (string) $message->getFrom());
         } elseif ($message->getFrom() instanceof Alphanumeric) {
-            return $xmlDocument->createElement('from_alphanumeric', utf8_decode((string) $message->getFrom()));
+            return $xmlDocument->createElement('from_alphanumeric', (string) $message->getFrom());
         }
 
         throw new SendException("Unsupported message from adress type");
