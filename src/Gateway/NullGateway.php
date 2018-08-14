@@ -48,10 +48,15 @@ class NullGateway implements GatewayInterface
      */
     public function receiveMessage($data): MessageInterface
     {
-        return Message::create(
+        $message = Message::create(
             $data['to'] ?? '46700000000',
-            $data['text'] ?? '-'
+            $data['text'] ?? '-',
+            array_key_exists('from', $data) ? $data['from'] : '46700111111'
         );
+
+        $message->setId(uniqid());
+
+        return $message;
     }
 
     /**
