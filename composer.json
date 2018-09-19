@@ -10,20 +10,6 @@
       "name": "Andreas Nilsson"
     }
   ],
-  "require": {
-    "php": ">=7.1",
-    "psr/log": "^1.0",
-    "php-http/httplug": "^1.0",
-    "php-http/message-factory": "^1.0",
-    "php-http/discovery": "^1.0",
-    "php-http/client-implementation": "^1.0"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^6.0",
-    "squizlabs/php_codesniffer": "^3.0",
-    "php-http/guzzle6-adapter": "^1.0",
-    "php-http/message": "^1.0"
-  },
   "autoload": {
     "psr-4": {
       "AnSms\\": "src/"
@@ -33,6 +19,24 @@
     "psr-4": {
       "AnSms\\Tests\\": "tests/"
     }
+  },
+  "require": {
+    "php": ">=7.1",
+    "psr/log": "^1.0",
+    "php-http/httplug": "^1.0",
+    "php-http/message-factory": "^1.0",
+    "php-http/discovery": "^1.0",
+    "php-http/client-implementation": "^1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.0",
+    "squizlabs/php_codesniffer": "^3.0",
+    "php-http/guzzle6-adapter": "^1.0",
+    "php-http/message": "^1.0",
+    "nexmo/client": "^1.4"
+  },
+  "suggest": {
+    "nexmo/client": "Required to use the Nexmo gateway provider"
   },
   "scripts": {
     "test": [
