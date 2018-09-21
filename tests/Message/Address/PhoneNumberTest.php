@@ -10,26 +10,27 @@ class PhoneNumberTest extends TestCase
     /**
      * @dataProvider createProvider
      */
-    public function testCanPhoneNumberBeCreated(string $value, bool $expectException = false)
+    public function testCanPhoneNumberBeCreated(string $testPhoneNumber, bool $valid, string $expectedResult = null)
     {
-        if ($expectException) {
+        if (! $valid) {
             $this->expectException(\InvalidArgumentException::class);
         }
 
-        $alphanumeric = new PhoneNumber($value);
+        $phoneNumber = new PhoneNumber($testPhoneNumber);
 
-        $this->assertSame($value, $alphanumeric->get());
-        $this->assertSame($value, (string) $alphanumeric);
+        $this->assertSame($expectedResult, $phoneNumber->get());
+        $this->assertSame($expectedResult, (string) $phoneNumber);
     }
 
     public function createProvider(): array
     {
         return [
-            ['46700123456'],
-            ['0700123456', true],
-            ['12345', true],
-            ['12345abc', true],
-            ['46700123456789012345', true],
+            ['46700123456', true, '46700123456'],
+            ['+46700123456', true, '46700123456'],
+            ['0700123456', false],
+            ['12345', false],
+            ['12345abc', false],
+            ['46700123456789012345', false],
         ];
     }
 }
