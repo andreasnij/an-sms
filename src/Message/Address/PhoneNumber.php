@@ -21,10 +21,10 @@ class PhoneNumber extends AbstractAddress
      */
     public function __construct(string $phoneNumber)
     {
-        if (!preg_match('/^[1-9][0-9]{7,14}$/', $phoneNumber)) {
+        if (!preg_match('/^\+?[1-9][0-9]{7,14}$/', $phoneNumber)) {
             throw new \InvalidArgumentException("{$phoneNumber} is not a valid MSISDN phone number");
         }
 
-        $this->value = $phoneNumber;
+        $this->value = ltrim($phoneNumber, '+');
     }
 }
