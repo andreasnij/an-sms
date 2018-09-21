@@ -88,8 +88,6 @@ class NexmoGatewayTest extends TestCase
         $this->gateway->sendMessage($messageMock);
     }
 
-
-
     public function testSendMessages()
     {
         $messages = [
@@ -108,21 +106,18 @@ class NexmoGatewayTest extends TestCase
 
     public function testReceiveSmsMessage()
     {
-        $to = '46700123001';
-        $text = 'Hello!';
-        $from = '46700123456';
-
         $data = [
-            'to' => $to,
-            'text' => $text,
-            'msisdn' => $from,
-            'messageId' => '123',
+            'to' => ($to = '46700123001'),
+            'text' => ($text = 'Hello!'),
+            'msisdn' => ($from = '46700123456'),
+            'messageId' => ($id = '123'),
         ];
         $message = $this->gateway->receiveMessage($data);
 
         $this->assertSame($to, (string) $message->getTo());
         $this->assertSame($text, $message->getText());
         $this->assertSame($from, (string) $message->getFrom());
+        $this->assertSame($id, $message->getId());
     }
 
     public function testReceiveInvalidSmsMessage()

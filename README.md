@@ -5,6 +5,7 @@
 
 An extendable library for sending and receiving SMS messages. Currently comes packaged with these gateway providers:
 
+- [Twilio](https://www.twilio.com) (supports: sending, receiving, delivery reports)
 - [Nexmo](https://www.nexmo.com) (supports: sending, receiving, delivery reports)
 - [Cellsynt](https://www.cellsynt.com) (supports: sending, premium, receiving, delivery reports)
 - [Telenor SMS Pro](https://www.smspro.se/) (supports: sending, delivery reports)
@@ -23,7 +24,13 @@ install this one, an adapter for a client you are already using or another one. 
  [adapters](https://packagist.org/providers/php-http/client-implementation) available. Read more about this in the 
  [HTTPlug docs](http://docs.php-http.org/en/latest/httplug/users.html).
 
-If you want to use the Nexmo gateway provider you also need to install the Nexmo client:
+If you want to use the **Twilio** gateway provider you also need to install the Twilio SDK:
+
+```bash
+$ composer require twilio/sdk
+```
+
+If you want to use the **Nexmo** gateway provider you also need to install the Nexmo client:
 
 ```bash
 $ composer require nexmo/client
