@@ -122,7 +122,7 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
         $result = json_decode($content, true);
         if (!is_array($result)) {
             throw new SendException('Send message failed with error: ' . $content);
-        } elseif (!isset($result['status']) || $result['status'] != 'created') {
+        } elseif (!isset($result['status']) || !in_array($result['status'], ['created', 'sent', 'delivered'])) {
             throw new SendException('Send message failed with missing status value: ' . $content);
         } elseif (!isset($result['id'])) {
             throw new SendException('Message sent but missing id in response: ' . $content);
