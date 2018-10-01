@@ -174,6 +174,5 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
         }
 
         return new DeliveryReport($data['id'], $data['status']);
-
     }
 }
