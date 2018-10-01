@@ -41,10 +41,15 @@ abstract class AbstractMessage implements MessageInterface
      */
     protected $operator;
 
-     /**
+    /**
      * @var string|null
      */
     protected $countryCode;
+
+    /**
+     * @var int|null
+     */
+    protected $segmentCount;
 
     /**
      * @param AddressInterface      $to   The recipient's number
@@ -70,8 +75,8 @@ abstract class AbstractMessage implements MessageInterface
 
     public function setText(string $text): void
     {
-        if (empty($text) || mb_strlen($text) > 160) {
-            throw new \InvalidArgumentException('Text is required and can not be more than 160 characters long');
+        if (empty($text)) {
+            throw new \InvalidArgumentException('Text is required');
         }
 
         $this->text = $text;
@@ -122,6 +127,16 @@ abstract class AbstractMessage implements MessageInterface
         return $this->countryCode;
     }
 
+    public function getSegmentCount(): ?int
+    {
+        return $this->segmentCount;
+    }
+
+    public function setSegmentCount(int $segmentCount): void
+    {
+        $this->segmentCount = $segmentCount;
+    }
+
     public function getLogContext(): array
     {
         return array_filter([
@@ -131,6 +146,7 @@ abstract class AbstractMessage implements MessageInterface
             'id' => $this->getId(),
             'operator' => $this->getOperator(),
             'countryCode' => $this->getCountryCode(),
+            'segmentCount' => $this->getSegmentCount(),
         ]);
     }
 }

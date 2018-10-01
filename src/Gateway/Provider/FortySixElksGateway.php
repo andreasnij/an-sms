@@ -79,8 +79,7 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
             $response = $this->httpClient->sendRequest($request);
             $content = (string) $response->getBody();
 
-            $trackingId = $this->parseSendResponseContent($content);
-            $message->setId($trackingId);
+            $this->parseSendResponseContent($content, $message);
         } catch (TransferException $e) {
             throw new SendException($e->getMessage(), 0, $e);
         }
@@ -115,9 +114,8 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
     /**
      * @param string $content
      * @throws SendException
-     * @return string
      */
-    protected function parseSendResponseContent(string $content): string
+    protected function parseSendResponseContent(string $content, MessageInterface $message): void
     {
         $result = json_decode($content, true);
         if (!is_array($result)) {
@@ -128,7 +126,11 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
             throw new SendException('Message sent but missing id in response: ' . $content);
         }
 
-        return $result['id'];
+        $message->setId($result['id']);
+
+        if (isset($result['parts'])) {
+            $message->setSegmentCount((int) $result['parts']);
+        }
     }
 
     /**
@@ -144,11 +146,34 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
 
     public function receiveMessage($data): MessageInterface
     {
-        // @todo
+        if (empty($data['id']) || empty($data['from']) || empty($data['to']) || empty($data['message'])) {
+            throw new ReceiveException(sprintf(
+                'Invalid receive message data. Data received: %s',
+                var_export($data, true)
+            ));
+        }
+
+        $receivedMessage = Message::create(
+            $data['to'],
+            $data['message'],
+            $data['from']
+        );
+
+        $receivedMessage->setId($data['id']);
+
+        return $receivedMessage;
     }
 
     public function receiveDeliveryReport($data): DeliveryReportInterface
     {
-        // @todo
+        if (empty($data['id']) || empty($data['status'])) {
+            throw new ReceiveException(sprintf(
+                'Invalid message delivery report data. Data received: %s',
+                var_export($data, true)
+            ));
+        }
+
+        return new DeliveryReport($data['id'], $data['status']);
+
     }
 }

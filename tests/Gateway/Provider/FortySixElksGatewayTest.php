@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Gateway\Provider;
 
+use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
 use AnSms\Gateway\Provider\FortySixElksGateway;
 use AnSms\Message\Message;
@@ -70,6 +71,8 @@ class FortySixElksGatewayTest extends TestCase
         $responseMock->method('getBody')->willReturn('{"status": "created", "direction": "outgoing", "from": "Forty6Elks", "created": "2018-09-27T06:50:35.559577", "parts": 1, "to": "+46700123001", "cost": 3500, "message": "Hello world!", "id": "a95b04cf23d7f94c508e675b38eb46934"}');
 
         $this->gateway->sendMessage($message);
+        $this->assertEquals('a95b04cf23d7f94c508e675b38eb46934', $message->getId());
+        $this->assertEquals(1, $message->getSegmentCount());
     }
 
     public function testSendMessageWithInvalidJsonGeneratesError()
@@ -139,5 +142,55 @@ class FortySixElksGatewayTest extends TestCase
         $responseMock->method('getBody')->willReturn('{"status": "created", "direction": "outgoing", "from": "Forty6Elks", "created": "2018-09-27T06:50:35.559577", "parts": 1, "to": "+46700123001", "cost": 3500, "message": "Hello world!", "id": "a95b04cf23d7f94c508e675b38eb46934"}');
 
         $this->gateway->sendMessages($messages);
+    }
+
+    public function testReceiveSmsMessage()
+    {
+        $id = 'sc3b36dc364f9f55ff0dcb52124aeacf7';
+        $to = '46700123001';
+        $text = 'Hello!';
+        $from = '46700123456';
+
+        $data = [
+            'id' => $id,
+            'to' => $to,
+            'message' => $text,
+            'from' => $from
+        ];
+        $message = $this->gateway->receiveMessage($data);
+
+        $this->assertSame($to, (string) $message->getTo());
+        $this->assertSame($text, $message->getText());
+        $this->assertSame($from, (string) $message->getFrom());
+        $this->assertSame($id, $message->getId());
+    }
+
+    public function testReceiveInvalidSmsMessage()
+    {
+        $this->expectException(ReceiveException::class);
+
+        $this->gateway->receiveMessage([]);
+    }
+
+    public function testReceiveDeliveryReport()
+    {
+        $id = 'sc3b36dc364f9f55ff0dcb52124aeacf7';
+        $status = 'delivered';
+
+        $data = [
+            'id' => $id,
+            'status' => $status
+        ];
+        $deliveryReport = $this->gateway->receiveDeliveryReport($data);
+
+        $this->assertSame($id, $deliveryReport->getId());
+        $this->assertSame($status, $deliveryReport->getStatus());
+    }
+
+    public function testReceiveInvalidDeliveryReport()
+    {
+        $this->expectException(ReceiveException::class);
+
+        $this->gateway->receiveDeliveryReport([]);
     }
 }
