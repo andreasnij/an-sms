@@ -59,7 +59,7 @@ class FortySixElksGatewayTest extends TestCase
             'Authorization' => 'Basic c29tZS11c2VybmFtZTpzb21lLXBhc3N3b3Jk',
             'Content-type' => 'application/x-www-form-urlencoded',
         ];
-        $query = 'from=Forty6Elks&to=%2B46700123001&message=Hello+world%21';
+        $query = 'from=Forty6Elks&to=46700123001&message=Hello+world%21';
 
         $requestMock = $this->createMock(RequestInterface::class);
         $this->messageFactoryMock->expects($this->once())
