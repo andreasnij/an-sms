@@ -2,7 +2,7 @@
   "name": "jandreasn/an-sms",
   "type": "library",
   "description": "A PHP library to send and receive SMS text messages through various providers/gateways.",
-  "keywords": ["sms", "psms", "premium sms", "cellsynt", "twilio", "nexmo"],
+  "keywords": ["sms", "psms", "premium sms", "cellsynt", "twilio", "nexmo", "46elks"],
   "homepage": "http://github.com/jandreasn/an-sms",
   "license": "MIT",
   "authors": [

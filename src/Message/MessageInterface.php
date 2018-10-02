@@ -43,4 +43,8 @@ interface MessageInterface
     public function setCountryCode(string $countryCode): void;
 
     public function getCountryCode(): ?string;
+
+    public function setSegmentCount(int $segmentCount): void;
+
+    public function getSegmentCount(): ?int;
 }

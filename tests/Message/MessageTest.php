@@ -14,6 +14,7 @@ class MessageTest extends TestCase
     private const TEST_ID = '12345';
     private const TEST_OPERATOR = 'Company';
     private const TEST_COUNTRY_CODE = 'SE';
+    private const SEGMENT_COUNT = 1;
 
     /**
      * @var Message
@@ -31,6 +32,7 @@ class MessageTest extends TestCase
         $this->message->setId(self::TEST_ID);
         $this->message->setOperator(self::TEST_OPERATOR);
         $this->message->setCountryCode(self::TEST_COUNTRY_CODE);
+        $this->message->setSegmentCount(self::SEGMENT_COUNT);
     }
 
     public function testMessageCanBeCreated()
@@ -54,14 +56,6 @@ class MessageTest extends TestCase
         $this->message->setText($newText);
 
         $this->assertSame($newText, $this->message->getText());
-    }
-
-    public function testTextCantBeTooLong()
-    {
-        $newText = str_repeat('s', 161);
-
-        $this->expectException(\InvalidArgumentException::class);
-        $this->message->setText($newText);
     }
 
     public function testFromCanBeSet()
@@ -100,12 +94,13 @@ class MessageTest extends TestCase
     {
          $this->assertSame(
              [
-                'to' => self::TEST_TO,
-                'text' => self::TEST_TEXT,
-                'from' => self::TEST_FROM,
-                'id' => self::TEST_ID,
-                'operator' => self::TEST_OPERATOR,
-                'countryCode' => self::TEST_COUNTRY_CODE,
+                 'to' => self::TEST_TO,
+                 'text' => self::TEST_TEXT,
+                 'from' => self::TEST_FROM,
+                 'id' => self::TEST_ID,
+                 'operator' => self::TEST_OPERATOR,
+                 'countryCode' => self::TEST_COUNTRY_CODE,
+                 'segmentCount' => self::SEGMENT_COUNT,
              ],
              $this->message->getLogContext()
          );
