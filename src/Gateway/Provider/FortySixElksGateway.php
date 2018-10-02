@@ -37,27 +37,27 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
     /**
      * @var string
      */
-    protected $username;
+    protected $apiUsername;
 
     /**
      * @var string
      */
-    protected $password;
+    protected $apiPassword;
 
     public function __construct(
-        string $username,
-        string $password,
+        string $apiUsername,
+        string $apiPassword,
         HttpClient $httpClient = null,
         MessageFactory $messageFactory = null
     ) {
         parent::__construct($httpClient, $messageFactory);
 
-        if (empty($username) || empty($password)) {
-            throw new \InvalidArgumentException('46 Elks username and password are required');
+        if (empty($apiUsername) || empty($apiPassword)) {
+            throw new \InvalidArgumentException('46 Elks api username and api password are required');
         }
 
-        $this->username = $username;
-        $this->password = $password;
+        $this->apiUsername = $apiUsername;
+        $this->apiPassword = $apiPassword;
     }
 
     /**
@@ -66,13 +66,12 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
      */
     public function sendMessage(MessageInterface $message): void
     {
-        $queryData = $this->buildSendQueryData($message);
-        $query = http_build_query($queryData);
+        $data = http_build_query($this->buildSendData($message));
         $request = $this->messageFactory->createRequest(
             'POST',
-            $this->getApiEndpoint(),
+            self::SMS_API_ENDPOINT,
             $this->getHeaders(),
-            $query
+            $data
         );
 
         try {
@@ -88,22 +87,22 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
     protected function getHeaders(): array
     {
         $headers = [
-            'Authorization' => 'Basic ' . base64_encode(sprintf('%s:%s', $this->username, $this->password)),
+            'Authorization' => 'Basic ' . base64_encode(sprintf('%s:%s', $this->apiUsername, $this->apiPassword)),
             'Content-type' => 'application/x-www-form-urlencoded',
         ];
 
         return $headers;
     }
 
-    protected function buildSendQueryData(MessageInterface $message): array
+    protected function buildSendData(MessageInterface $message): array
     {
-        $queryData = [
+        $data = [
             'from' => (string) $message->getFrom(),
             'to' => '+' . $message->getTo(),
             'message' => $message->getText(),
         ];
 
-        return $queryData;
+        return $data;
     }
 
     protected function getApiEndpoint(): string
