@@ -5,10 +5,16 @@
 
 An extendable library for sending and receiving SMS messages. Currently comes packaged with these gateway providers:
 
-- [Twilio](https://www.twilio.com) (supports: sending, receiving, delivery reports)
-- [Nexmo](https://www.nexmo.com) (supports: sending, receiving, delivery reports)
-- [Cellsynt](https://www.cellsynt.com) (supports: sending, premium, receiving, delivery reports)
-- [Telenor SMS Pro](https://www.smspro.se/) (supports: sending, delivery reports)
+<br>
+
+|                                            | Send SMS | Delivery reports | Receive SMS | Premium SMS |
+|--------------------------------------------|:--------:|:----------------:|:-----------:|:-----------:|
+| [46elks](https://46elks.com/)              |    ✔     |       ✔          |      ✔      |             |
+| [Cellsynt](https://www.cellsynt.com)       |    ✔     |       ✔          |      ✔      |      ✔      |
+| [Nexmo](https://www.nexmo.com)             |    ✔     |       ✔          |      ✔      |             |
+| [Twilio](https://www.twilio.com)           |    ✔     |       ✔          |      ✔      |             |
+| [Telenor SMS Pro](https://www.smspro.se/)  |    ✔     |       ✔          |             |             |
+
 
 You can add and use your own gateway provider. This library enables easy switching between different gateways.
 
