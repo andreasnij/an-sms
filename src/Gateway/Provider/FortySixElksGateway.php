@@ -105,11 +105,6 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
         return $data;
     }
 
-    protected function getApiEndpoint(): string
-    {
-        return static::SMS_API_ENDPOINT;
-    }
-
     /**
      * @param string $content
      * @throws SendException
