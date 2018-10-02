@@ -98,7 +98,7 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
     {
         $data = [
             'from' => (string) $message->getFrom(),
-            'to' => '+' . $message->getTo(),
+            'to' => (string) $message->getTo(),
             'message' => $message->getText(),
         ];
 
