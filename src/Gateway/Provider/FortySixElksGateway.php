@@ -13,14 +13,10 @@ use AnSms\Gateway\AbstractHttpGateway;
 use AnSms\Gateway\GatewayInterface;
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
-use AnSms\Message\Address\AddressInterface;
-use AnSms\Message\Address\Alphanumeric;
-use AnSms\Message\Address\ShortCode;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
 use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 use AnSms\Message\DeliveryReport\DeliveryReport;
-use AnSms\Message\PremiumMessageInterface;
 use Http\Client\Exception\TransferException;
 use Http\Client\HttpClient;
 use Http\Message\MessageFactory;
@@ -53,7 +49,7 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
         parent::__construct($httpClient, $messageFactory);
 
         if (empty($apiUsername) || empty($apiPassword)) {
-            throw new \InvalidArgumentException('46 Elks api username and api password are required');
+            throw new \InvalidArgumentException('46Elks api username and api password are required');
         }
 
         $this->apiUsername = $apiUsername;

@@ -68,7 +68,17 @@ class FortySixElksGatewayTest extends TestCase
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
-        $responseMock->method('getBody')->willReturn('{"status": "created", "direction": "outgoing", "from": "Forty6Elks", "created": "2018-09-27T06:50:35.559577", "parts": 1, "to": "+46700123001", "cost": 3500, "message": "Hello world!", "id": "a95b04cf23d7f94c508e675b38eb46934"}');
+        $responseMock->method('getBody')->willReturn(json_encode([
+            'status' => 'created',
+            'direction' => 'outgoing',
+            'from' => 'Forty6Elks',
+            'created' => '2018-09-27T06:50:35.559577',
+            'parts' => 1,
+            'to' => '+46700123001',
+            'cost' => 3500,
+            'message' => 'Hello world!',
+            'id' => 'a95b04cf23d7f94c508e675b38eb46934',
+        ]));
 
         $this->gateway->sendMessage($message);
         $this->assertEquals('a95b04cf23d7f94c508e675b38eb46934', $message->getId());
@@ -139,7 +149,17 @@ class FortySixElksGatewayTest extends TestCase
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->clientMock->expects($this->exactly(2))->method('sendRequest')->willReturn($responseMock);
 
-        $responseMock->method('getBody')->willReturn('{"status": "created", "direction": "outgoing", "from": "Forty6Elks", "created": "2018-09-27T06:50:35.559577", "parts": 1, "to": "+46700123001", "cost": 3500, "message": "Hello world!", "id": "a95b04cf23d7f94c508e675b38eb46934"}');
+        $responseMock->method('getBody')->willReturn(json_encode([
+            'status' => 'created',
+            'direction' => 'outgoing',
+            'from' => 'Forty6Elks',
+            'created' => '2018-09-27T06:50:35.559577',
+            'parts' => 1,
+            'to' => '+46700123001',
+            'cost' => 3500,
+            'message' => 'Hello world!',
+            'id' => 'a95b04cf23d7f94c508e675b38eb46934',
+        ]));
 
         $this->gateway->sendMessages($messages);
     }
