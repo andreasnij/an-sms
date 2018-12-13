@@ -131,7 +131,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
             $header->appendChild($xml->createElement('request_id', $messageId));
         }
         if (($xmlChild = $this->getMessageFromXmlChild($message, $xml))) {
-            $header->appendChild($xml->createElement('from_alphanumeric', (string) $message->getFrom()));
+            $header->appendChild($xmlChild);
         }
         if ($this->supplementaryInformation !== null) {
             $header->appendChild($xml->createElement('sub_id_1', $this->supplementaryInformation));
@@ -142,7 +142,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
         $sms = $xml->createElement('sms');
         $sms->appendChild(($messageElement = $xml->createElement('message')));
         $messageElement->appendChild($xml->createCDATASection($message->getText()));
-        $sms->appendChild($xml->createElement('to_msisdn', (string) $message->getTo()));
+        $sms->appendChild($xml->createElement('to_msisdn', '+' . $message->getTo()));
         $payload->appendChild($sms);
         $mobileCtrlSms->appendChild($payload);
 
@@ -158,7 +158,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
         }
 
         if ($message->getFrom() instanceof PhoneNumber) {
-            return $xmlDocument->createElement('from_msisdn', (string) $message->getFrom());
+            return $xmlDocument->createElement('from_msisdn', '+' . $message->getFrom());
         } elseif ($message->getFrom() instanceof Alphanumeric) {
             return $xmlDocument->createElement('from_alphanumeric', (string) $message->getFrom());
         }

@@ -55,14 +55,14 @@ class TelenorGatewayTest extends TestCase
 
     public function testSendMessage()
     {
-        $message = Message::create('46700123001', 'Hello world!', '46700123456');
+        $message = Message::create('46700123001', 'Hello world!', 'Testing');
 
         $url = 'https://sms-pro.net:44343/services/some-customer-id/sendsms';
         $headers = ['Authorization' => 'Basic c29tZS11c2VybmFtZTpzb21lLXBhc3N3b3Jk'];
         $body = '<?xml version="1.0" encoding="ISO-8859-1"?>'. "\n";
         $body .= "<mobilectrl_sms><header><customer_id>some-customer-id</customer_id>"
-            . '<password>some-customer-password</password><from_alphanumeric>46700123456</from_alphanumeric></header>'
-            . '<payload><sms><message><![CDATA[Hello world!]]></message><to_msisdn>46700123001</to_msisdn></sms>'
+            . '<password>some-customer-password</password><from_alphanumeric>Testing</from_alphanumeric></header>'
+            . '<payload><sms><message><![CDATA[Hello world!]]></message><to_msisdn>+46700123001</to_msisdn></sms>'
             . "</payload></mobilectrl_sms>\n";
 
 
