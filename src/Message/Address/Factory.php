@@ -9,9 +9,6 @@
 
 namespace AnSms\Message\Address;
 
-/**
- * @author Andreas Nilsson <http://github.com/jandreasn>
- */
 class Factory
 {
     public static function create(string $address): AddressInterface

@@ -27,8 +27,6 @@ use DOMDocument;
 
 /**
  * Telenor SMS Pro SMS gateway provider.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
  */
 class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
 {

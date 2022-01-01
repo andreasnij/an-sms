@@ -22,8 +22,6 @@ use Twilio\Values;
 
 /**
  * Twilio SMS gateway provider.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
  */
 class TwilioGateway implements GatewayInterface
 {

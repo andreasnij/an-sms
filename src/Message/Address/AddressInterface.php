@@ -9,9 +9,6 @@
 
 namespace AnSms\Message\Address;
 
-/**
- * @author Andreas Nilsson <http://github.com/jandreasn>
- */
 interface AddressInterface
 {
     public function get(): string;

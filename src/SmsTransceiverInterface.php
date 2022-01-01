@@ -18,8 +18,6 @@ use Psr\Log\LoggerAwareInterface;
 
 /**
  * Interface for sending and receiving SMS text messages.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
  */
 interface SmsTransceiverInterface extends LoggerAwareInterface
 {

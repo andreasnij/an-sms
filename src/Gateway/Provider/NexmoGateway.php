@@ -26,8 +26,6 @@ use Nexmo\Client\Exception\Exception as NexmoClientException;
 
 /**
  * Nexmo SMS gateway provider.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
  */
 class NexmoGateway extends AbstractHttpGateway implements GatewayInterface
 {

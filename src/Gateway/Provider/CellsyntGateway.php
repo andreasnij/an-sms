@@ -27,8 +27,6 @@ use Http\Message\MessageFactory;
 
 /**
  * Cellsynt SMS and Premium SMS gateway provider.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
  */
 class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
 {

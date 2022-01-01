@@ -13,8 +13,6 @@ use AnSms\Message\Address\Factory as AddressFactory;
 
 /**
  * Represents a SMS text message.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
  */
 class Message extends AbstractMessage
 {

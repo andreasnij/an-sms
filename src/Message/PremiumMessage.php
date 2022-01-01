@@ -14,8 +14,6 @@ use AnSms\Message\Address\Factory as AddressFactory;
 
 /**
  * Represents a premium mobile terminated (MT) reverse billing outgoing SMS message.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
  */
 class PremiumMessage extends AbstractMessage implements PremiumMessageInterface
 {

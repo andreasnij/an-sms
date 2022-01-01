@@ -14,9 +14,6 @@ use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\MessageFactory;
 
-/**
- * @author Andreas Nilsson <http://github.com/jandreasn>
- */
 abstract class AbstractHttpGateway
 {
     /**

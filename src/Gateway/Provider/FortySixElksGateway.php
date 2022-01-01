@@ -23,8 +23,6 @@ use Http\Message\MessageFactory;
 
 /**
  * 46Elks SMS gateway provider.
- *
- * @author Jon Gotlin <http://github.com/jongotlin>
  */
 class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterface
 {

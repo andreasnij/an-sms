@@ -21,8 +21,6 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Send and receives SMS text messages.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
  */
 class SmsTransceiver implements SmsTransceiverInterface
 {

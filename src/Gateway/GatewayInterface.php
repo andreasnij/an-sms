@@ -14,9 +14,6 @@ use AnSms\Exception\SendException;
 use AnSms\Message\MessageInterface;
 use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 
-/**
- * @author Andreas Nilsson <http://github.com/jandreasn>
- */
 interface GatewayInterface
 {
     /**

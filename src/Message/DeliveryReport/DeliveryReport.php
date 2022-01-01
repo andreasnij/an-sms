@@ -9,9 +9,6 @@
 
 namespace AnSms\Message\DeliveryReport;
 
-/**
- * @author Andreas Nilsson <http://github.com/jandreasn>
- */
 class DeliveryReport implements DeliveryReportInterface
 {
     /**

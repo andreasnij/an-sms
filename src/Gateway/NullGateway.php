@@ -20,8 +20,6 @@ use AnSms\Message\MessageInterface;
  * Black hole gateway.
  *
  * Can be used for development/testing.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
  */
 class NullGateway implements GatewayInterface
 {

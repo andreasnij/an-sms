@@ -11,9 +11,6 @@ namespace AnSms\Message;
 
 use AnSms\Message\Address\AddressInterface;
 
-/**
- * @author Andreas Nilsson <http://github.com/jandreasn>
- */
 abstract class AbstractMessage implements MessageInterface
 {
     /**
