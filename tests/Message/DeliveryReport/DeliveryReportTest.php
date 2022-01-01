@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Message\Address;
+namespace AnSms\Tests\Message\DeliveryReport;
 
 use AnSms\Message\DeliveryReport\DeliveryReport;
 use PHPUnit\Framework\TestCase;

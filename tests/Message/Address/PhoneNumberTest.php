@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Message\Address;
+namespace AnSms\Tests\Message\Address;
 
 use AnSms\Message\Address\PhoneNumber;
 use PHPUnit\Framework\TestCase;

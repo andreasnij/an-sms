@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Gateway\Provider;
+namespace AnSms\Tests\Gateway\Provider;
 
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;

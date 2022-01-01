@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Message;
+namespace AnSms\Tests\Message;
 
 use AnSms\Message\Address\AddressInterface;
 use AnSms\Message\MessageInterface;

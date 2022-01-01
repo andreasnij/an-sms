@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Gateway;
+namespace AnSms\Tests\Gateway;
 
 use AnSms\Gateway\NullGateway;
 use AnSms\Message\DeliveryReport\DeliveryReportInterface;
