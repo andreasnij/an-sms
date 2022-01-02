@@ -19,7 +19,7 @@ jobs:
           coverage: none
 
       - name: Install composer dependencies with cache
-      - uses: "ramsey/composer-install@v2"
+        uses: "ramsey/composer-install@v2"
 
       - name: Run tests
         run: composer test
