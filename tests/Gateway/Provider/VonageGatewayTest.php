@@ -45,13 +45,13 @@ class VonageGatewayTest extends TestCase
         $message = Message::create('46700100000', 'Hello world!', '46700123456');
         $messageId = '123';
 
-        $nexmoMessageMock = $this->createMock(VonageMessage::class);
-        $nexmoMessageMock->method('getMessageId')->willReturn($messageId);
+        $vonageMessageMock = $this->createMock(VonageMessage::class);
+        $vonageMessageMock->method('getMessageId')->willReturn($messageId);
 
         $this->vonageMessageClientMock
             ->expects($this->once())
             ->method('send')
-            ->willReturn($nexmoMessageMock);
+            ->willReturn($vonageMessageMock);
 
         $this->gateway->sendMessage($message);
 
@@ -78,11 +78,11 @@ class VonageGatewayTest extends TestCase
             Message::create('46700100000', 'Hello world!'),
         ];
 
-        $nexmoMessageMock = $this->createMock(VonageMessage::class);
+        $vonageMessageMock = $this->createMock(VonageMessage::class);
         $this->vonageMessageClientMock
             ->expects($this->exactly(2))
             ->method('send')
-            ->willReturn($nexmoMessageMock);
+            ->willReturn($vonageMessageMock);
 
         $this->gateway->sendMessages($messages);
     }

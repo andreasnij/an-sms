@@ -9,6 +9,7 @@
         "cellsynt",
         "twilio",
         "nexmo",
+        "vonage",
         "46elks"
     ],
     "homepage": "http://github.com/jandreasn/an-sms",
@@ -46,7 +47,7 @@
     },
     "suggest": {
         "twilio/sdk": "Required to use the Twilio gateway provider",
-        "nexmo/client": "Required to use the Nexmo gateway provider"
+        "vonage/client-core": "Required to use the Vonage gateway provider"
     },
     "scripts": {
         "phpcs": "vendor/bin/phpcs",
