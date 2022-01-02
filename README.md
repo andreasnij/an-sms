@@ -75,9 +75,12 @@ $smsTransceiver->sendMessage($premiumMessage);
 
 ```
 
-
 ## Requirements
-- Requires PHP 7.1 or above.
+- Requires PHP 8.0 or above.
+
+## Upgrading
+
+Please see [UPGRADING](UPGRADING.md) for details.
 
 ## Author
 Andreas Nilsson (<http://github.com/jandreasn>)
