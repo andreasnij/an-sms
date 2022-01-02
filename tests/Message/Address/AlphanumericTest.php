@@ -10,7 +10,7 @@ class AlphanumericTest extends TestCase
     /**
      * @dataProvider createProvider
      */
-    public function testCanAlphanumericBeCreated(string $value, bool $expectException = false)
+    public function testCanAlphanumericBeCreated(string $value, bool $expectException = false): void
     {
         if ($expectException) {
             $this->expectException(\InvalidArgumentException::class);

@@ -24,7 +24,6 @@ use AnSms\Message\MessageInterface;
 class NullGateway implements GatewayInterface
 {
     /**
-     * @param MessageInterface $message
      * @throws SendException
      */
     public function sendMessage(MessageInterface $message): void
@@ -40,12 +39,17 @@ class NullGateway implements GatewayInterface
     }
 
     /**
-     * @param array $data
      * @throws ReceiveException
-     * @return MessageInterface
      */
-    public function receiveMessage($data): MessageInterface
+    public function receiveMessage(mixed $data): MessageInterface
     {
+        if (!is_array($data)) {
+            throw new ReceiveException(sprintf(
+                'Invalid receive message data. Data received: %s',
+                var_export($data, true)
+            ));
+        }
+
         $message = Message::create(
             $data['to'] ?? '46700000000',
             $data['text'] ?? '-',
@@ -58,12 +62,17 @@ class NullGateway implements GatewayInterface
     }
 
     /**
-     * @param array $data
      * @throws ReceiveException
-     * @return DeliveryReportInterface
      */
-    public function receiveDeliveryReport($data): DeliveryReportInterface
+    public function receiveDeliveryReport(mixed $data): DeliveryReportInterface
     {
+        if (!is_array($data)) {
+            throw new ReceiveException(sprintf(
+                'Invalid message delivery report data. Data received: %s',
+                var_export($data, true)
+            ));
+        }
+
         return new DeliveryReport(
             $data['trackingid'] ?? '',
             $data['status'] ??  ''

@@ -11,10 +11,7 @@ namespace AnSms\Message\Address;
 
 abstract class AbstractAddress implements AddressInterface
 {
-    /**
-     * @var string
-     */
-    protected $value;
+    protected string $value;
 
     public function get(): string
     {

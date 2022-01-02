@@ -35,7 +35,7 @@ class CellsyntGatewayTest extends TestCase
         );
     }
 
-    public function testCreateCellsyntGatewayWithInvalidCredentials()
+    public function testCreateCellsyntGatewayWithInvalidCredentials(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         new CellsyntGateway(
@@ -47,7 +47,7 @@ class CellsyntGatewayTest extends TestCase
         );
     }
 
-    public function testSendCellsyntMessage()
+    public function testSendCellsyntMessage(): void
     {
         $message = Message::create('46700123001', 'Hello world!', '46700123456');
 
@@ -67,7 +67,7 @@ class CellsyntGatewayTest extends TestCase
         $this->gateway->sendMessage($message);
     }
 
-    public function testSendCellsyntMessageGeneratesError()
+    public function testSendCellsyntMessageGeneratesError(): void
     {
         $messageMock = $this->createMock(MessageInterface::class);
 
@@ -83,7 +83,7 @@ class CellsyntGatewayTest extends TestCase
         $this->gateway->sendMessage($messageMock);
     }
 
-    public function testSendCellsyntPremiumSmsMessage()
+    public function testSendCellsyntPremiumSmsMessage(): void
     {
         $incomingMessage = Message::create('46700123001', 'Hello world!', '46700123456');
         $incomingMessage->setId('123');
@@ -106,7 +106,7 @@ class CellsyntGatewayTest extends TestCase
     }
 
 
-    public function testSendCellsyntMessages()
+    public function testSendCellsyntMessages(): void
     {
         $messages = [
             Message::create('46700123001', 'Hello world!'),
@@ -124,7 +124,7 @@ class CellsyntGatewayTest extends TestCase
         $this->gateway->sendMessages($messages);
     }
 
-    public function testReceiveCellsyntSmsMessage()
+    public function testReceiveCellsyntSmsMessage(): void
     {
         $to = '46700123001';
         $text = 'Hello!';
@@ -142,14 +142,14 @@ class CellsyntGatewayTest extends TestCase
         $this->assertSame($from, (string) $message->getFrom());
     }
 
-    public function testReceiveCellsyntInvalidSmsMessage()
+    public function testReceiveCellsyntInvalidSmsMessage(): void
     {
         $this->expectException(ReceiveException::class);
 
         $this->gateway->receiveMessage([]);
     }
 
-    public function testReceiveCellsyntPremiumSmsMessage()
+    public function testReceiveCellsyntPremiumSmsMessage(): void
     {
         $to = '12345';
         $text = 'Hello!';
@@ -176,14 +176,14 @@ class CellsyntGatewayTest extends TestCase
         $this->assertSame($id, $message->getId());
     }
 
-    public function testReceiveCellsyntInvalidPremiumSmsMessage()
+    public function testReceiveCellsyntInvalidPremiumSmsMessage(): void
     {
         $this->expectException(ReceiveException::class);
 
         $this->gateway->receiveMessage(['sessionid' => '123']);
     }
 
-    public function testReceiveCellsyntDeliveryReport()
+    public function testReceiveCellsyntDeliveryReport(): void
     {
         $id = '12345';
         $status = 'delivered';
@@ -198,7 +198,7 @@ class CellsyntGatewayTest extends TestCase
         $this->assertSame($status, $deliveryReport->getStatus());
     }
 
-    public function testReceiveCellsyntInvalidDeliveryReport()
+    public function testReceiveCellsyntInvalidDeliveryReport(): void
     {
         $this->expectException(ReceiveException::class);
 
@@ -208,8 +208,10 @@ class CellsyntGatewayTest extends TestCase
     /**
      * @dataProvider addressTypeProvider
      */
-    public function testGetCellsyntOriginatorTypeReturnsCorrectType(AddressInterface $address, string $expectedType)
-    {
+    public function testGetCellsyntOriginatorTypeReturnsCorrectType(
+        AddressInterface $address,
+        string $expectedType
+    ): void {
         $reflectionClass = new \ReflectionClass(CellsyntGateway::class);
         $reflectionMethod = $reflectionClass->getMethod('getOriginatorType');
         $reflectionMethod->setAccessible(true);

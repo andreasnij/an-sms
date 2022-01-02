@@ -10,8 +10,11 @@ class PhoneNumberTest extends TestCase
     /**
      * @dataProvider createProvider
      */
-    public function testCanPhoneNumberBeCreated(string $testPhoneNumber, bool $valid, string $expectedResult = null)
-    {
+    public function testCanPhoneNumberBeCreated(
+        string $testPhoneNumber,
+        bool $valid,
+        ?string $expectedResult = null
+    ): void {
         if (! $valid) {
             $this->expectException(\InvalidArgumentException::class);
         }

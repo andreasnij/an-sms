@@ -16,10 +16,7 @@ class MessageTest extends TestCase
     private const TEST_COUNTRY_CODE = 'SE';
     private const SEGMENT_COUNT = 1;
 
-    /**
-     * @var Message
-     */
-    private $message;
+    private Message $message;
 
     protected function setUp(): void
     {
@@ -35,14 +32,14 @@ class MessageTest extends TestCase
         $this->message->setSegmentCount(self::SEGMENT_COUNT);
     }
 
-    public function testMessageCanBeCreated()
+    public function testMessageCanBeCreated(): void
     {
         $this->assertSame(self::TEST_TO, (string) $this->message->getTo());
         $this->assertSame(self::TEST_TEXT, $this->message->getText());
         $this->assertSame(self::TEST_FROM, (string) $this->message->getFrom());
     }
 
-    public function testToCanBeSet()
+    public function testToCanBeSet(): void
     {
         $newTo = new PhoneNumber('46700123123');
         $this->message->setTo($newTo);
@@ -50,7 +47,7 @@ class MessageTest extends TestCase
         $this->assertSame((string) $newTo, (string) $this->message->getTo());
     }
 
-    public function testTextCanBeSet()
+    public function testTextCanBeSet(): void
     {
         $newText = 'Helloooo!';
         $this->message->setText($newText);
@@ -58,7 +55,7 @@ class MessageTest extends TestCase
         $this->assertSame($newText, $this->message->getText());
     }
 
-    public function testFromCanBeSet()
+    public function testFromCanBeSet(): void
     {
         $newFrom = new PhoneNumber('46700123456');
         $this->message->setFrom($newFrom);
@@ -66,7 +63,7 @@ class MessageTest extends TestCase
         $this->assertSame((string) $newFrom, (string) $this->message->getFrom());
     }
 
-    public function testIdCanBeSet()
+    public function testIdCanBeSet(): void
     {
         $newId = '54321';
         $this->message->setId($newId);
@@ -74,7 +71,7 @@ class MessageTest extends TestCase
         $this->assertSame($newId, $this->message->getId());
     }
 
-    public function testOperatorCanBeSet()
+    public function testOperatorCanBeSet(): void
     {
         $newOperator = 'Other Company';
         $this->message->setOperator($newOperator);
@@ -82,7 +79,7 @@ class MessageTest extends TestCase
         $this->assertSame($newOperator, $this->message->getOperator());
     }
 
-    public function testCountryCodeCanBeSet()
+    public function testCountryCodeCanBeSet(): void
     {
         $newCountryCode = 'UK';
         $this->message->setCountryCode($newCountryCode);
@@ -90,7 +87,7 @@ class MessageTest extends TestCase
         $this->assertSame($newCountryCode, $this->message->getCountryCode());
     }
 
-    public function testLogContext()
+    public function testLogContext(): void
     {
          $this->assertSame(
              [

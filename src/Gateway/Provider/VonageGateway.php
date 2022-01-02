@@ -40,8 +40,10 @@ class VonageGateway implements GatewayInterface
             throw new InvalidArgumentException('Vonage API key and secret are required');
         }
 
-        $this->vonageClient = $vonageClient;
-        if ($vonageClient === null) {
+
+        if ($vonageClient) {
+            $this->vonageClient = $vonageClient;
+        } else {
             $credentials = new VonageBasicCredentials($apiKey, $apiSecret);
             $this->vonageClient = new VonageClient($credentials, [], $httpClient);
         }
@@ -53,7 +55,6 @@ class VonageGateway implements GatewayInterface
     }
 
     /**
-     * @param MessageInterface $message
      * @throws SendException
      */
     public function sendMessage(MessageInterface $message): void
@@ -65,7 +66,9 @@ class VonageGateway implements GatewayInterface
                 'from' => $message->getFrom(),
             ]);
 
-            $message->setId($vonageMessage->getMessageId());
+            if (($messageId = $vonageMessage->getMessageId())) {
+                $message->setId($messageId);
+            }
         } catch (ClientExceptionInterface | VonageClientException $e) {
             throw new SendException($e->getMessage(), 0, $e);
         }
@@ -83,11 +86,13 @@ class VonageGateway implements GatewayInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @throws ReceiveException
      */
-    public function receiveMessage($data): MessageInterface
+    public function receiveMessage(mixed $data): MessageInterface
     {
-        if (empty($data['text']) || empty($data['to']) || empty($data['msisdn']) || empty($data['messageId'])) {
+        if (!is_array($data) || empty($data['text']) || empty($data['to'])
+            || empty($data['msisdn']) || empty($data['messageId'])
+        ) {
             throw new ReceiveException(sprintf(
                 'Invalid receive message data. Data received: %s',
                 var_export($data, true)
@@ -106,11 +111,11 @@ class VonageGateway implements GatewayInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @throws ReceiveException
      */
-    public function receiveDeliveryReport($data): DeliveryReportInterface
+    public function receiveDeliveryReport(mixed $data): DeliveryReportInterface
     {
-        if (empty($data['messageId']) || empty($data['status'])) {
+        if (!is_array($data) || empty($data['messageId']) || empty($data['status'])) {
             throw new ReceiveException(sprintf(
                 'Invalid message delivery report data. Data received: %s',
                 var_export($data, true)

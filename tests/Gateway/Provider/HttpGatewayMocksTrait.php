@@ -9,9 +9,14 @@ use Psr\Http\Message\StreamFactoryInterface;
 
 trait HttpGatewayMocksTrait
 {
-    private ClientInterface|MockObject $clientMock;
-    private RequestFactoryInterface|MockObject $requestFactoryMock;
-    private StreamFactoryInterface|MockObject $streamFactoryMock;
+    /** @var ClientInterface&MockObject  */
+    private MockObject $clientMock;
+
+    /** @var RequestFactoryInterface&MockObject  */
+    private MockObject $requestFactoryMock;
+
+    /** @var StreamFactoryInterface&MockObject  */
+    private MockObject $streamFactoryMock;
 
     protected function createHttpGatewayMocks(): void
     {

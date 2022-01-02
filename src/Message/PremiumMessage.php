@@ -11,21 +11,15 @@ namespace AnSms\Message;
 
 use AnSms\Message\Address\AddressInterface;
 use AnSms\Message\Address\Factory as AddressFactory;
+use InvalidArgumentException;
 
 /**
  * Represents a premium mobile terminated (MT) reverse billing outgoing SMS message.
  */
 class PremiumMessage extends AbstractMessage implements PremiumMessageInterface
 {
-    /**
-     * @var int
-     */
-    protected $price;
-
-    /**
-     * @var string
-     */
-    protected $incomingMessageId;
+    protected int $price;
+    protected string $incomingMessageId;
 
     /**
      * @param AddressInterface      $to                The recipient's number
@@ -39,7 +33,7 @@ class PremiumMessage extends AbstractMessage implements PremiumMessageInterface
         string $text,
         int $price,
         string $incomingMessageId,
-        AddressInterface $from = null
+        ?AddressInterface $from = null
     ) {
         parent::__construct($to, $text, $from);
 
@@ -52,7 +46,7 @@ class PremiumMessage extends AbstractMessage implements PremiumMessageInterface
         string $text,
         int $price,
         string $incomingMessageId,
-        string $from = null
+        ?string $from = null
     ): self {
         return new self(
             AddressFactory::create($to),
@@ -68,11 +62,19 @@ class PremiumMessage extends AbstractMessage implements PremiumMessageInterface
         int $price,
         MessageInterface $incomingMessage
     ): self {
+        if (! ($from = $incomingMessage->getFrom())) {
+            throw new InvalidArgumentException('Incoming message has empty from');
+        }
+
+        if (! ($incomingMessageId = $incomingMessage->getId())) {
+            throw new InvalidArgumentException('Incoming message has empty id');
+        }
+
         return new self(
-            $incomingMessage->getFrom(),
+            $from,
             $text,
             $price,
-            $incomingMessage->getId(),
+            $incomingMessageId,
             $incomingMessage->getTo()
         );
     }

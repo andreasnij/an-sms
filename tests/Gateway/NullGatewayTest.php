@@ -19,14 +19,14 @@ class NullGatewayTest extends TestCase
         $this->gateway = new NullGateway();
     }
 
-    public function testReceiveMessage()
+    public function testReceiveMessage(): void
     {
         $message = $this->gateway->receiveMessage([]);
 
         $this->assertInstanceOf(MessageInterface::class, $message);
     }
 
-    public function testReceiveDeliveryReport()
+    public function testReceiveDeliveryReport(): void
     {
         $deliveryReport = $this->gateway->receiveDeliveryReport([]);
 

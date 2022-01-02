@@ -16,7 +16,7 @@ use AnSms\Message\Address\Factory as AddressFactory;
  */
 class Message extends AbstractMessage
 {
-    public static function create(string $to, string $text, string $from = null): self
+    public static function create(string $to, string $text, ?string $from = null): self
     {
         return new self(
             AddressFactory::create($to),

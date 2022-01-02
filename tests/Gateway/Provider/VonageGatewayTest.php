@@ -16,7 +16,9 @@ use Vonage\Client\Exception\Exception as VonageClientException;
 
 class VonageGatewayTest extends TestCase
 {
-    private VonageMessageClient|MockObject $vonageMessageClientMock;
+    /** @var VonageMessageClient&MockObject  */
+    private MockObject $vonageMessageClientMock;
+
     private VonageGateway $gateway;
 
     protected function setUp(): void
@@ -32,13 +34,13 @@ class VonageGatewayTest extends TestCase
         );
     }
 
-    public function testCreateVonageGatewayWithInvalidCredentials()
+    public function testCreateVonageGatewayWithInvalidCredentials(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         new VonageGateway('', '');
     }
 
-    public function testSendVonageMessage()
+    public function testSendVonageMessage(): void
     {
         $message = Message::create('46700100000', 'Hello world!', '46700123456');
         $messageId = '123';
@@ -56,7 +58,7 @@ class VonageGatewayTest extends TestCase
         $this->assertSame($messageId, $message->getId());
     }
 
-    public function testSendVonageMessageGeneratesError()
+    public function testSendVonageMessageGeneratesError(): void
     {
         $this->vonageMessageClientMock
             ->expects($this->once())
@@ -69,7 +71,7 @@ class VonageGatewayTest extends TestCase
         $this->gateway->sendMessage($messageMock);
     }
 
-    public function testSendVonageMessages()
+    public function testSendVonageMessages(): void
     {
         $messages = [
             Message::create('46700100000', 'Hello world!'),
@@ -85,7 +87,7 @@ class VonageGatewayTest extends TestCase
         $this->gateway->sendMessages($messages);
     }
 
-    public function testReceiveVonageSmsMessage()
+    public function testReceiveVonageSmsMessage(): void
     {
         $data = [
             'to' => ($to = '46700123001'),
@@ -101,14 +103,14 @@ class VonageGatewayTest extends TestCase
         $this->assertSame($id, $message->getId());
     }
 
-    public function testReceiveVonageInvalidSmsMessage()
+    public function testReceiveVonageInvalidSmsMessage(): void
     {
         $this->expectException(ReceiveException::class);
 
         $this->gateway->receiveMessage([]);
     }
 
-    public function testReceiveVonageDeliveryReport()
+    public function testReceiveVonageDeliveryReport(): void
     {
         $id = '12345';
         $status = 'delivered';
@@ -123,7 +125,7 @@ class VonageGatewayTest extends TestCase
         $this->assertSame($status, $deliveryReport->getStatus());
     }
 
-    public function testReceiveVonageInvalidDeliveryReport()
+    public function testReceiveVonageInvalidDeliveryReport(): void
     {
         $this->expectException(ReceiveException::class);
 

@@ -11,15 +11,8 @@ namespace AnSms\Message\DeliveryReport;
 
 class DeliveryReport implements DeliveryReportInterface
 {
-    /**
-     * @var string
-     */
-    protected $id;
-
-    /**
-     * @var string
-     */
-    protected $status;
+    protected string $id;
+    protected string $status;
 
     public function __construct(string $id, string $status)
     {

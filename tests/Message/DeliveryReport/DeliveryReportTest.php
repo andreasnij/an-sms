@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class DeliveryReportTest extends TestCase
 {
-    public function testGetIdReturnsId()
+    public function testGetIdReturnsId(): void
     {
         $id = '123';
         $deliveryReport = new DeliveryReport($id, 'some status');
@@ -15,7 +15,7 @@ class DeliveryReportTest extends TestCase
         $this->assertSame($id, $deliveryReport->getId());
     }
 
-    public function testGetStatusReturnsStatus()
+    public function testGetStatusReturnsStatus(): void
     {
         $status = 'delivered';
         $deliveryReport = new DeliveryReport('123', $status);
@@ -23,7 +23,7 @@ class DeliveryReportTest extends TestCase
         $this->assertSame($status, $deliveryReport->getStatus());
     }
 
-    public function testGetLogContextReturnsContext()
+    public function testGetLogContextReturnsContext(): void
     {
         $id = '123';
         $status = 'delivered';

@@ -51,7 +51,6 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
     }
 
     /**
-     * @param MessageInterface $message
      * @throws SendException
      */
     public function sendMessage(MessageInterface $message): void
@@ -87,8 +86,6 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
     }
 
     /**
-     * @param string $content
-     * @param MessageInterface $message
      * @throws SendException
      */
     protected function parseSendResponseContent(string $content, MessageInterface $message): void
@@ -120,9 +117,14 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
         }
     }
 
-    public function receiveMessage($data): MessageInterface
+    /**
+     * @throws ReceiveException
+     */
+    public function receiveMessage(mixed $data): MessageInterface
     {
-        if (empty($data['id']) || empty($data['from']) || empty($data['to']) || empty($data['message'])) {
+        if (!is_array($data) || empty($data['id']) || empty($data['from'])
+            || empty($data['to']) || empty($data['message'])
+        ) {
             throw new ReceiveException(sprintf(
                 'Invalid receive message data. Data received: %s',
                 var_export($data, true)
@@ -140,9 +142,12 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
         return $receivedMessage;
     }
 
-    public function receiveDeliveryReport($data): DeliveryReportInterface
+    /**
+     * @throws ReceiveException
+     */
+    public function receiveDeliveryReport(mixed $data): DeliveryReportInterface
     {
-        if (empty($data['id']) || empty($data['status'])) {
+        if (!is_array($data) || empty($data['id']) || empty($data['status'])) {
             throw new ReceiveException(sprintf(
                 'Invalid message delivery report data. Data received: %s',
                 var_export($data, true)

@@ -37,8 +37,10 @@ class TwilioGateway implements GatewayInterface
             throw new InvalidArgumentException('Twilio Account SID and auth token are required');
         }
 
-        $this->twilioClient = $twilioClient;
-        if ($twilioClient === null) {
+
+        if ($twilioClient) {
+            $this->twilioClient = $twilioClient;
+        } else {
             $this->twilioClient = new TwilioClient($accountSid, $authToken);
         }
     }
@@ -49,7 +51,6 @@ class TwilioGateway implements GatewayInterface
     }
 
     /**
-     * @param MessageInterface $message
      * @throws SendException
      */
     public function sendMessage(MessageInterface $message): void
@@ -81,11 +82,13 @@ class TwilioGateway implements GatewayInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @throws ReceiveException
      */
-    public function receiveMessage($data): MessageInterface
+    public function receiveMessage(mixed $data): MessageInterface
     {
-        if (empty($data['To']) || empty($data['Body']) || empty($data['From']) || empty($data['MessageSid'])) {
+        if (!is_array($data) || empty($data['To']) || empty($data['Body'])
+            || empty($data['From']) || empty($data['MessageSid'])
+        ) {
             throw new ReceiveException(sprintf(
                 'Invalid receive message data. Data received: %s',
                 var_export($data, true)
@@ -104,11 +107,11 @@ class TwilioGateway implements GatewayInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @throws ReceiveException
      */
-    public function receiveDeliveryReport($data): DeliveryReportInterface
+    public function receiveDeliveryReport(mixed $data): DeliveryReportInterface
     {
-        if (empty($data['MessageSid']) || empty($data['MessageStatus'])) {
+        if (!is_array($data) || empty($data['MessageSid']) || empty($data['MessageStatus'])) {
             throw new ReceiveException(sprintf(
                 'Invalid message delivery report data. Data received: %s',
                 var_export($data, true)

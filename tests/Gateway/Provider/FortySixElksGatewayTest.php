@@ -30,7 +30,7 @@ class FortySixElksGatewayTest extends TestCase
         );
     }
 
-    public function testCreateElkGatewayWithInvalidCredentials()
+    public function testCreateElkGatewayWithInvalidCredentials(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         new FortySixElksGateway(
@@ -42,7 +42,7 @@ class FortySixElksGatewayTest extends TestCase
         );
     }
 
-    public function testSendElkMessage2()
+    public function testSendElkMessage(): void
     {
         $message = Message::create('46700123001', 'Hello world!', 'Forty6Elks');
 
@@ -75,7 +75,7 @@ class FortySixElksGatewayTest extends TestCase
         $this->assertEquals(1, $message->getSegmentCount());
     }
 
-    public function testSendElkMessageWithInvalidJsonGeneratesError()
+    public function testSendElkMessageWithInvalidJsonGeneratesError(): void
     {
         $messageMock = $this->createMock(MessageInterface::class);
 
@@ -94,7 +94,7 @@ class FortySixElksGatewayTest extends TestCase
         $this->gateway->sendMessage($messageMock);
     }
 
-    public function testSendElkMessageResonseWithMissingStatusKeyGeneratesError()
+    public function testSendElkMessageResonseWithMissingStatusKeyGeneratesError(): void
     {
         $messageMock = $this->createMock(MessageInterface::class);
 
@@ -113,7 +113,7 @@ class FortySixElksGatewayTest extends TestCase
         $this->gateway->sendMessage($messageMock);
     }
 
-    public function testSendElkMessageResonseWithMissingIdKeyGeneratesError()
+    public function testSendElkMessageResonseWithMissingIdKeyGeneratesError(): void
     {
         $messageMock = $this->createMock(MessageInterface::class);
 
@@ -132,7 +132,7 @@ class FortySixElksGatewayTest extends TestCase
         $this->gateway->sendMessage($messageMock);
     }
 
-    public function testSendElkMessages()
+    public function testSendElkMessages(): void
     {
         $messages = [
             Message::create('46700123001', 'Hello world!', 'Forty6Elks'),
@@ -162,7 +162,7 @@ class FortySixElksGatewayTest extends TestCase
         $this->gateway->sendMessages($messages);
     }
 
-    public function testReceiveElkSmsMessage()
+    public function testReceiveElkSmsMessage(): void
     {
         $id = 'sc3b36dc364f9f55ff0dcb52124aeacf7';
         $to = '46700123001';
@@ -183,14 +183,14 @@ class FortySixElksGatewayTest extends TestCase
         $this->assertSame($id, $message->getId());
     }
 
-    public function testReceiveElkInvalidSmsMessage()
+    public function testReceiveElkInvalidSmsMessage(): void
     {
         $this->expectException(ReceiveException::class);
 
         $this->gateway->receiveMessage([]);
     }
 
-    public function testReceiveDeliveryReport()
+    public function testReceiveDeliveryReport(): void
     {
         $id = 'sc3b36dc364f9f55ff0dcb52124aeacf7';
         $status = 'delivered';
@@ -205,7 +205,7 @@ class FortySixElksGatewayTest extends TestCase
         $this->assertSame($status, $deliveryReport->getStatus());
     }
 
-    public function testReceiveElkInvalidDeliveryReport()
+    public function testReceiveElkInvalidDeliveryReport(): void
     {
         $this->expectException(ReceiveException::class);
 

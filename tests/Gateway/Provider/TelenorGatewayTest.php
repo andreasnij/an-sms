@@ -33,7 +33,7 @@ class TelenorGatewayTest extends TestCase
         );
     }
 
-    public function testCreateTelenorGatewayWithInvalidCredentials()
+    public function testCreateTelenorGatewayWithInvalidCredentials(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         new TelenorGateway(
@@ -48,7 +48,7 @@ class TelenorGatewayTest extends TestCase
         );
     }
 
-    public function testSendTelenorMessage()
+    public function testSendTelenorMessage(): void
     {
         $message = Message::create('46700123001', 'Hello world!', 'Testing');
 
@@ -76,7 +76,7 @@ class TelenorGatewayTest extends TestCase
             </mobilectrl_response>';
     }
 
-    public function testSendTelenorMessageGeneratesError()
+    public function testSendTelenorMessageGeneratesError(): void
     {
         $messageMock = $this->createMock(MessageInterface::class);
 
@@ -97,7 +97,7 @@ class TelenorGatewayTest extends TestCase
         $this->gateway->sendMessage($messageMock);
     }
 
-    public function testSendTelenorMessages()
+    public function testSendTelenorMessages(): void
     {
         $messages = [
             Message::create('46700123001', 'Hello world!'),
@@ -117,7 +117,7 @@ class TelenorGatewayTest extends TestCase
         $this->gateway->sendMessages($messages);
     }
 
-    public function testReceiveTelenorDeliveryReport()
+    public function testReceiveTelenorDeliveryReport(): void
     {
         $id = '12345';
         $status = 'SMS SENT';
@@ -135,7 +135,7 @@ class TelenorGatewayTest extends TestCase
         $this->assertSame($status, $deliveryReport->getStatus());
     }
 
-    public function testReceiveTelenorInvalidDeliveryReport()
+    public function testReceiveTelenorInvalidDeliveryReport(): void
     {
         $this->expectException(ReceiveException::class);
 

@@ -10,7 +10,7 @@ class ShortCodeTest extends TestCase
     /**
      * @dataProvider createProvider
      */
-    public function testCanShortCodeBeCreated(string $value, bool $expectException = false)
+    public function testCanShortCodeBeCreated(string $value, bool $expectException = false): void
     {
         if ($expectException) {
             $this->expectException(\InvalidArgumentException::class);

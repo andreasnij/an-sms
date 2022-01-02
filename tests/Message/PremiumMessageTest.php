@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class PremiumMessageTest extends TestCase
 {
-    public function testPremiumMessageCanBeCreated()
+    public function testPremiumMessageCanBeCreated(): void
     {
         $to = '46700123456';
         $text = 'Thank you!';
@@ -26,7 +26,7 @@ class PremiumMessageTest extends TestCase
         $this->assertSame($from, (string) $premiumMessage->getFrom());
     }
 
-    public function testPremiumMessageCanBeCreatedFromIncomingMessage()
+    public function testPremiumMessageCanBeCreatedFromIncomingMessage(): void
     {
         $price = 5;
         $text = 'Thank you!';
@@ -39,9 +39,9 @@ class PremiumMessageTest extends TestCase
     }
 
     /**
-     * @return MessageInterface|MockObject
+     * @return MessageInterface&MockObject
      */
-    private function createIncomingMessageMock()
+    private function createIncomingMessageMock(): MockObject
     {
         $incomingMessageMock = $this->createMock(MessageInterface::class);
         $incomingMessageMock->method('getTo')->willReturn($this->createMock(AddressInterface::class));
@@ -52,7 +52,7 @@ class PremiumMessageTest extends TestCase
         return $incomingMessageMock;
     }
 
-    public function testLogContext()
+    public function testLogContext(): void
     {
         $price = 5;
         $premiumMessage = PremiumMessage::createFromIncomingMessage(

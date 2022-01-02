@@ -50,7 +50,6 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
     }
 
     /**
-     * @param MessageInterface $message
      * @throws SendException
      */
     public function sendMessage(MessageInterface $message): void
@@ -124,9 +123,7 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
     }
 
     /**
-     * @param string $content
      * @throws SendException
-     * @return string
      */
     protected function parseSendResponseContent(string $content): string
     {
@@ -178,12 +175,17 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
      * For premium SMS: /psms/incoming?country=se&operator=telia&shortcode=72456&
      * sender=0046700123456&text=ABC+test!&sessionid=1:1136364712521:0046700123456
      *
-     * @param array $data
      * @throws ReceiveException
-     * @return MessageInterface
      */
-    public function receiveMessage($data): MessageInterface
+    public function receiveMessage(mixed $data): MessageInterface
     {
+        if (!is_array($data)) {
+            throw new ReceiveException(sprintf(
+                'Invalid receive message data. Data received: %s',
+                var_export($data, true)
+            ));
+        }
+
         if (isset($data['sessionid'])) {
             return $this->receivePremiumSmsMessage($data);
         }
@@ -198,13 +200,13 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
      * For premium SMS: /psms/incoming?country=se&operator=telia&shortcode=72456&
      * sender=0046700123456&text=ABC+test!&sessionid=1:1136364712521:0046700123456
      *
-     * @param array $data
      * @throws ReceiveException
-     * @return MessageInterface
      */
-    protected function receiveSmsMessage($data): MessageInterface
+    protected function receiveSmsMessage(array $data): MessageInterface
     {
-        if (empty($data['text']) || empty($data['destination']) || empty($data['originator'])) {
+        if (empty($data['text']) || empty($data['destination'])
+            || empty($data['originator'])
+        ) {
             throw new ReceiveException(sprintf(
                 'Invalid receive message data. Data received: %s',
                 var_export($data, true)
@@ -230,11 +232,9 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
      * Cellsynt example request: Example request: /psms/incoming?country=se&operator=telia&shortcode=72456&
      * sender=0046700123456&text=ABC+test!&sessionid=1:1136364712521:0046700123456
      *
-     * @param array $data
      * @throws ReceiveException
-     * @return MessageInterface
      */
-    public function receivePremiumSmsMessage($data): MessageInterface
+    public function receivePremiumSmsMessage(array $data): MessageInterface
     {
         if (empty($data['country']) || empty($data['operator']) || empty($data['shortcode'])
              || empty($data['sender']) || empty($data['text']) || empty($data['sessionid'])
@@ -264,13 +264,11 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
      * Cellsynt example request: http://www.example.com/status.php?trackingid=e1066ca059
      * abb8661ffc059ed842c3cf&status=delivered
      *
-     * @param array $data
      * @throws ReceiveException
-     * @return DeliveryReportInterface
      */
-    public function receiveDeliveryReport($data): DeliveryReportInterface
+    public function receiveDeliveryReport(mixed $data): DeliveryReportInterface
     {
-        if (empty($data['trackingid']) || empty($data['status'])) {
+        if (!is_array($data) || empty($data['trackingid']) || empty($data['status'])) {
             throw new ReceiveException(sprintf(
                 'Invalid message delivery report data. Data received: %s',
                 var_export($data, true)

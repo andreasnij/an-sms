@@ -17,7 +17,6 @@ use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 interface GatewayInterface
 {
     /**
-     * @param MessageInterface $message
      * @throws SendException
      */
     public function sendMessage(MessageInterface $message): void;
@@ -29,16 +28,12 @@ interface GatewayInterface
     public function sendMessages(array $messages): void;
 
     /**
-     * @param mixed $data
      * @throws ReceiveException
-     * @return MessageInterface
      */
-    public function receiveMessage($data): MessageInterface;
+    public function receiveMessage(mixed $data): MessageInterface;
 
     /**
-     * @param mixed $data
      * @throws ReceiveException
-     * @return DeliveryReportInterface
      */
-    public function receiveDeliveryReport($data): DeliveryReportInterface;
+    public function receiveDeliveryReport(mixed $data): DeliveryReportInterface;
 }

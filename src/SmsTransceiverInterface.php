@@ -22,7 +22,6 @@ use Psr\Log\LoggerAwareInterface;
 interface SmsTransceiverInterface extends LoggerAwareInterface
 {
     /**
-     * @param MessageInterface $message
      * @throws SendException
      */
     public function sendMessage(MessageInterface $message) : void;
@@ -34,21 +33,14 @@ interface SmsTransceiverInterface extends LoggerAwareInterface
     public function sendMessages(array $messages): void;
 
     /**
-     * @param mixed $data
-     * @return MessageInterface
      * @throws ReceiveException
      */
-    public function receiveMessage($data) : MessageInterface;
+    public function receiveMessage(mixed $data) : MessageInterface;
 
     /**
-     * @param mixed $data
-     * @return DeliveryReportInterface
      * @throws ReceiveException
      */
-    public function receiveDeliveryReport($data) : DeliveryReportInterface;
+    public function receiveDeliveryReport(mixed $data) : DeliveryReportInterface;
 
-    /**
-     * @param $defaultFrom AddressInterface|string|null
-     */
-    public function setDefaultFrom($defaultFrom): void;
+    public function setDefaultFrom(AddressInterface|string|null $defaultFrom): void;
 }

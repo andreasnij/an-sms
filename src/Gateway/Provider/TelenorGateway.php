@@ -52,7 +52,6 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
     }
 
     /**
-     * @param MessageInterface $message
      * @throws SendException
      */
     public function sendMessage(MessageInterface $message): void
@@ -112,7 +111,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
 
         $xml->appendChild($mobileCtrlSms);
 
-        return $xml->saveXML();
+        return (string) $xml->saveXML();
     }
 
     protected function getMessageFromXmlChild(MessageInterface $message, DOMDocument $xmlDocument): ?DOMElement
@@ -131,9 +130,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
     }
 
     /**
-     * @param string $content
      * @throws SendException
-     * @return string
      */
     protected function parseSendResponseContent(string $content): string
     {
@@ -143,7 +140,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
         }
 
         if (!isset($xml->status) || (int) $xml->status !== 0) {
-            throw new SendException('Send message failed with error: ' . $xml->message ?? '');
+            throw new SendException('Send message failed with error: ' . ($xml->message ?? ''));
         }
 
         $trackingId = (string) $xml->mobilectrl_id;
@@ -163,18 +160,25 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Not implemented/available.
      */
-    public function receiveMessage($data): MessageInterface
+    public function receiveMessage(mixed $data): MessageInterface
     {
         throw new \LogicException('Not implemented');
     }
 
     /**
-     * {@inheritdoc}
+     * @throws ReceiveException
      */
-    public function receiveDeliveryReport($data): DeliveryReportInterface
+    public function receiveDeliveryReport(mixed $data): DeliveryReportInterface
     {
+        if (!is_string($data)) {
+            throw new ReceiveException(sprintf(
+                'Invalid message delivery report data. Data received: %s',
+                var_export($data, true)
+            ));
+        }
+
         $xml = @simplexml_load_string($data);
         if ($xml === false) {
             throw new ReceiveException('Could not parse delivery report XML: ' . $data);
