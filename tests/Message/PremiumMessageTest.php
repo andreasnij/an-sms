@@ -5,8 +5,8 @@ namespace AnSms\Tests\Message;
 use AnSms\Message\Address\AddressInterface;
 use AnSms\Message\MessageInterface;
 use AnSms\Message\PremiumMessage;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 class PremiumMessageTest extends TestCase
 {
@@ -61,6 +61,6 @@ class PremiumMessageTest extends TestCase
             $this->createIncomingMessageMock()
         );
 
-        $this->assertArraySubset(['price' => $price], $premiumMessage->getLogContext());
+        $this->assertSame($price, $premiumMessage->getLogContext()['price'] ?? null);
     }
 }

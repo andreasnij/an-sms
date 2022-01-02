@@ -16,6 +16,7 @@ use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
 use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 use AnSms\Message\DeliveryReport\DeliveryReport;
+use InvalidArgumentException;
 use Twilio\Rest\Client as TwilioClient;
 use Twilio\Exceptions\TwilioException;
 use Twilio\Values;
@@ -25,16 +26,15 @@ use Twilio\Values;
  */
 class TwilioGateway implements GatewayInterface
 {
-    /** @var TwilioClient $twilioClient */
-    protected $twilioClient;
+    protected TwilioClient $twilioClient;
 
     public function __construct(
         string $accountSid,
         string $authToken,
-        TwilioClient $twilioClient = null
+        ?TwilioClient $twilioClient = null
     ) {
         if (empty($accountSid) || empty($authToken)) {
-            throw new \InvalidArgumentException('Twilio Account SID and auth token are required');
+            throw new InvalidArgumentException('Twilio Account SID and auth token are required');
         }
 
         $this->twilioClient = $twilioClient;
@@ -56,7 +56,7 @@ class TwilioGateway implements GatewayInterface
     {
         try {
             $twilioMessage =  $this->twilioClient->messages->create(
-                $message->getTo(),
+                (string) $message->getTo(),
                 [
                     'from' => $message->getFrom() ?: Values::NONE,
                     'body' => $message->getText(),

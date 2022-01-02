@@ -6,8 +6,8 @@ use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
 use AnSms\Gateway\Provider\TwilioGateway;
 use AnSms\Message\Message;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
 use Twilio\Rest\Client as TwilioClient;
 use Twilio\Rest\Api\V2010\Account\MessageList as TwilioMessageList;
 use Twilio\Rest\Api\V2010\Account\MessageInstance as TwilioMessage;
@@ -15,13 +15,10 @@ use Twilio\Exceptions\TwilioException;
 
 class TwilioGatewayTest extends TestCase
 {
-    /** @var TwilioGateway */
-    private $gateway;
+    private TwilioGateway $gateway;
+    private TwilioMessageList|MockObject $twilioMessageListMock;
 
-    /** @var TwilioMessageList|MockObject */
-    private $twilioMessageListMock;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $twilioClientMock = $this->createMock(TwilioClient::class);
         $this->twilioMessageListMock = $this->createMock(TwilioMessageList::class);
@@ -34,13 +31,13 @@ class TwilioGatewayTest extends TestCase
         );
     }
 
-    public function testCreateGatewayWithInvalidCredentials()
+    public function testCreateTwilioGatewayWithInvalidCredentials()
     {
         $this->expectException(\InvalidArgumentException::class);
         new TwilioGateway('', '');
     }
 
-    public function testSendMessage()
+    public function testSendTwilioMessage()
     {
         $message = Message::create('46700100000', 'Hello world!', '46700123456');
         $messageId = '123';
@@ -58,7 +55,7 @@ class TwilioGatewayTest extends TestCase
         $this->assertSame($messageId, $message->getId());
     }
 
-    public function testSendMessageGeneratesError()
+    public function testSendTwilioMessageGeneratesError()
     {
         $this->twilioMessageListMock
             ->expects($this->once())
@@ -71,7 +68,7 @@ class TwilioGatewayTest extends TestCase
         $this->gateway->sendMessage($messageMock);
     }
 
-    public function testSendMessages()
+    public function testSendTwilioMessages()
     {
         $messages = [
             Message::create('46700100000', 'Hello world!'),
@@ -87,7 +84,7 @@ class TwilioGatewayTest extends TestCase
         $this->gateway->sendMessages($messages);
     }
 
-    public function testReceiveSmsMessage()
+    public function testReceiveTwilioSmsMessage()
     {
         $data = [
             'To' => '+46700123001',
@@ -103,14 +100,14 @@ class TwilioGatewayTest extends TestCase
         $this->assertSame($id, $message->getId());
     }
 
-    public function testReceiveInvalidSmsMessage()
+    public function testReceiveTwilioInvalidSmsMessage()
     {
         $this->expectException(ReceiveException::class);
 
         $this->gateway->receiveMessage([]);
     }
 
-    public function testReceiveDeliveryReport()
+    public function testReceiveTwilioDeliveryReport()
     {
         $data = [
             'MessageSid' => ($id = '12345'),
@@ -122,7 +119,7 @@ class TwilioGatewayTest extends TestCase
         $this->assertSame($status, $deliveryReport->getStatus());
     }
 
-    public function testReceiveInvalidDeliveryReport()
+    public function testReceiveTwilioInvalidDeliveryReport()
     {
         $this->expectException(ReceiveException::class);
 

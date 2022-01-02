@@ -21,9 +21,11 @@ use AnSms\Message\MessageInterface;
 use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 use AnSms\Message\DeliveryReport\DeliveryReport;
 use AnSms\Message\PremiumMessageInterface;
-use Http\Client\Exception\TransferException;
-use Http\Client\HttpClient;
-use Http\Message\MessageFactory;
+use InvalidArgumentException;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 /**
  * Cellsynt SMS and Premium SMS gateway provider.
@@ -33,30 +35,18 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
     protected const SMS_API_ENDPOINT = 'https://se-1.cellsynt.net/sms.php';
     protected const PSMS_API_ENDPOINT = 'https://se-2.cellsynt.net/sendsms.php';
 
-    /**
-     * @var string
-     */
-    protected $username;
-
-    /**
-     * @var string
-     */
-    protected $password;
-
     public function __construct(
-        string $username,
-        string $password,
-        HttpClient $httpClient = null,
-        MessageFactory $messageFactory = null
+        protected string $username,
+        protected string $password,
+        ?ClientInterface $httpClient = null,
+        ?RequestFactoryInterface $requestFactory = null,
+        ?StreamFactoryInterface $streamFactory = null,
     ) {
-        parent::__construct($httpClient, $messageFactory);
+        parent::__construct($httpClient, $requestFactory, $streamFactory);
 
         if (empty($username) || empty($password)) {
-            throw new \InvalidArgumentException('Cellsynt username and password are required');
+            throw new InvalidArgumentException('Cellsynt username and password are required');
         }
-
-        $this->username = $username;
-        $this->password = $password;
     }
 
     /**
@@ -67,7 +57,7 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
     {
         $queryData = $this->buildSendQueryData($message);
         $query = http_build_query($queryData, '', '&');
-        $request = $this->messageFactory->createRequest(
+        $request = $this->requestFactory->createRequest(
             'GET',
             $this->getApiEndpoint($message) . '?' . $query
         );
@@ -78,7 +68,7 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
 
             $trackingId = $this->parseSendResponseContent($content);
             $message->setId($trackingId);
-        } catch (TransferException $e) {
+        } catch (ClientExceptionInterface $e) {
             throw new SendException($e->getMessage(), 0, $e);
         }
     }

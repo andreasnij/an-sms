@@ -3,8 +3,8 @@
 namespace AnSms\Tests;
 
 use AnSms\Message\Address\PhoneNumber;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
 use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 use AnSms\Message\MessageInterface;
 use AnSms\SmsTransceiver;
@@ -14,22 +14,11 @@ use Psr\Log\LoggerInterface;
 
 class SmsTransceiverTest extends TestCase
 {
-    /**
-     * @var SmsTransceiver
-     */
-    private $transceiver;
+    private SmsTransceiver $transceiver;
+    private GatewayInterface|MockObject $gatewayMock;
+    private LoggerInterface|MockObject $loggerMock;
 
-    /**
-     * @var GatewayInterface|MockObject
-     */
-    private $gatewayMock;
-
-    /**
-     * @var LoggerInterface|MockObject
-     */
-    private $loggerMock;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->gatewayMock = $this->createMock(GatewayInterface::class);
         $this->loggerMock = $this->createMock(LoggerInterface::class);

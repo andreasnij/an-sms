@@ -14,7 +14,7 @@ class NullGatewayTest extends TestCase
      */
     private $gateway;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->gateway = new NullGateway();
     }

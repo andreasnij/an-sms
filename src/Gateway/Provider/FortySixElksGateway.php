@@ -17,9 +17,11 @@ use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
 use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 use AnSms\Message\DeliveryReport\DeliveryReport;
-use Http\Client\Exception\TransferException;
-use Http\Client\HttpClient;
-use Http\Message\MessageFactory;
+use InvalidArgumentException;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 /**
  * 46Elks SMS gateway provider.
@@ -28,26 +30,20 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
 {
     protected const SMS_API_ENDPOINT = 'https://api.46elks.com/a1/SMS';
 
-    /**
-     * @var string
-     */
-    protected $apiUsername;
-
-    /**
-     * @var string
-     */
-    protected $apiPassword;
+    protected string $apiUsername;
+    protected string $apiPassword;
 
     public function __construct(
         string $apiUsername,
         string $apiPassword,
-        HttpClient $httpClient = null,
-        MessageFactory $messageFactory = null
+        ?ClientInterface $httpClient = null,
+        ?RequestFactoryInterface $requestFactory = null,
+        ?StreamFactoryInterface $streamFactory = null,
     ) {
-        parent::__construct($httpClient, $messageFactory);
+        parent::__construct($httpClient, $requestFactory, $streamFactory);
 
         if (empty($apiUsername) || empty($apiPassword)) {
-            throw new \InvalidArgumentException('46Elks api username and api password are required');
+            throw new InvalidArgumentException('46Elks api username and api password are required');
         }
 
         $this->apiUsername = $apiUsername;
@@ -61,46 +57,38 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
     public function sendMessage(MessageInterface $message): void
     {
         $data = http_build_query($this->buildSendData($message));
-        $request = $this->messageFactory->createRequest(
-            'POST',
-            self::SMS_API_ENDPOINT,
-            $this->getHeaders(),
-            $data
-        );
+        $request = $this->requestFactory->createRequest('POST', self::SMS_API_ENDPOINT)
+            ->withHeader('Content-type', 'application/x-www-form-urlencoded')
+            ->withHeader('Authorization', $this->getAuthorizationHeaderValue())
+            ->withBody($this->streamFactory->createStream($data));
 
         try {
             $response = $this->httpClient->sendRequest($request);
             $content = (string) $response->getBody();
 
             $this->parseSendResponseContent($content, $message);
-        } catch (TransferException $e) {
+        } catch (ClientExceptionInterface $e) {
             throw new SendException($e->getMessage(), 0, $e);
         }
     }
 
-    protected function getHeaders(): array
+    protected function getAuthorizationHeaderValue(): string
     {
-        $headers = [
-            'Authorization' => 'Basic ' . base64_encode(sprintf('%s:%s', $this->apiUsername, $this->apiPassword)),
-            'Content-type' => 'application/x-www-form-urlencoded',
-        ];
-
-        return $headers;
+        return 'Basic ' . base64_encode(sprintf('%s:%s', $this->apiUsername, $this->apiPassword));
     }
 
     protected function buildSendData(MessageInterface $message): array
     {
-        $data = [
+        return [
             'from' => (string) $message->getFrom(),
             'to' => (string) $message->getTo(),
             'message' => $message->getText(),
         ];
-
-        return $data;
     }
 
     /**
      * @param string $content
+     * @param MessageInterface $message
      * @throws SendException
      */
     protected function parseSendResponseContent(string $content, MessageInterface $message): void

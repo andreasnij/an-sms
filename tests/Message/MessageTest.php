@@ -21,7 +21,7 @@ class MessageTest extends TestCase
      */
     private $message;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->message = Message::create(
             self::TEST_TO,

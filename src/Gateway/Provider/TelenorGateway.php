@@ -20,10 +20,12 @@ use AnSms\Message\MessageInterface;
 use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 use AnSms\Message\DeliveryReport\DeliveryReport;
 use DOMElement;
-use Http\Client\Exception\TransferException;
-use Http\Client\HttpClient;
-use Http\Message\MessageFactory;
 use DOMDocument;
+use InvalidArgumentException;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 /**
  * Telenor SMS Pro SMS gateway provider.
@@ -32,64 +34,32 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
 {
     protected const API_ENDPOINT_TEMPLATE = 'https://sms-pro.net:44343/services/%s/sendsms';
 
-    /**
-     * @var string
-     */
-    protected $username;
-
-    /**
-     * @var string
-     */
-    protected $password;
-
-    /**
-     * @var string
-     */
-    protected $customerId;
-
-    /**
-     * @var string
-     */
-    protected $customerPassword;
-
-    /**
-     * @var string|null
-     */
-    private $supplementaryInformation;
-
     public function __construct(
-        string $username,
-        string $password,
-        string $customerId,
-        string $customerPassword,
-        string $supplementaryInformation = null,
-        HttpClient $httpClient = null,
-        MessageFactory $messageFactory = null
+        protected string $username,
+        protected string $password,
+        protected string $customerId,
+        protected string $customerPassword,
+        protected ?string $supplementaryInformation = null,
+        ?ClientInterface $httpClient = null,
+        ?RequestFactoryInterface $requestFactory = null,
+        ?StreamFactoryInterface $streamFactory = null,
     ) {
-        parent::__construct($httpClient, $messageFactory);
+        parent::__construct($httpClient, $requestFactory, $streamFactory);
 
         if (empty($username) || empty($password) || empty($customerId) || empty($customerPassword)) {
-            throw new \InvalidArgumentException('Sms Pro username and password, customer id and password are required');
+            throw new InvalidArgumentException('Sms Pro username and password, customer id and password are required');
         }
-
-        $this->username = $username;
-        $this->password = $password;
-        $this->customerId = $customerId;
-        $this->customerPassword = $customerPassword;
-        $this->supplementaryInformation = $supplementaryInformation;
     }
+
     /**
      * @param MessageInterface $message
      * @throws SendException
      */
     public function sendMessage(MessageInterface $message): void
     {
-        $request = $this->messageFactory->createRequest(
-            'POST',
-            $this->getApiEndpoint(),
-            $this->getHeaders(),
-            $this->buildSendBody($message)
-        );
+        $request = $this->requestFactory->createRequest('POST', $this->getApiEndpoint())
+            ->withHeader('Authorization', $this->getAuthorizationHeaderValue())
+            ->withBody($this->streamFactory->createStream($this->buildSendBody($message)));
 
         try {
             $response = $this->httpClient->sendRequest($request);
@@ -97,7 +67,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
             $content = (string) $response->getBody();
             $trackingId = $this->parseSendResponseContent($content);
             $message->setId($trackingId);
-        } catch (TransferException $e) {
+        } catch (ClientExceptionInterface $e) {
             throw new SendException($e->getMessage(), 0, $e);
         }
     }
@@ -107,13 +77,9 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
         return sprintf(self::API_ENDPOINT_TEMPLATE, $this->customerId);
     }
 
-    protected function getHeaders(): array
+    protected function getAuthorizationHeaderValue(): string
     {
-        $headers = [
-            'Authorization' => 'Basic ' . base64_encode(sprintf('%s:%s', $this->username, $this->password))
-        ];
-
-        return $headers;
+        return 'Basic ' . base64_encode(sprintf('%s:%s', $this->username, $this->password));
     }
 
     protected function buildSendBody(MessageInterface $message): string

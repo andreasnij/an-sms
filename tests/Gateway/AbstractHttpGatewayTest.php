@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class AbstractHttpGatewayTest extends TestCase
 {
-    public function testThatAutoDiscoveryCreatesInstances()
+    public function testThatAutoDiscoveryCreatesInstances(): void
     {
         $httpGateway = $this->getMockForAbstractClass(AbstractHttpGateway::class);
         /** @var AbstractHttpGateway $httpGateway */

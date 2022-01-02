@@ -7,63 +7,53 @@ use AnSms\Exception\SendException;
 use AnSms\Gateway\Provider\FortySixElksGateway;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
-use Http\Message\MessageFactory;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
 use Psr\Http\Message\RequestInterface;
-use Http\Adapter\Guzzle6\Client;
 use Psr\Http\Message\ResponseInterface;
 
 class FortySixElksGatewayTest extends TestCase
 {
-    /**
-     * @var FortySixElksGateway
-     */
-    private $gateway;
+    use HttpGatewayMocksTrait;
 
-    /**
-     * @var MessageFactory|MockObject
-     */
-    private $messageFactoryMock;
+    private FortySixElksGateway $gateway;
 
-    /**
-     * @var Client|MockObject
-     */
-    private $clientMock;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->clientMock = $this->createMock(Client::class);
-        $this->messageFactoryMock = $this->createMock(MessageFactory::class);
+        $this->createHttpGatewayMocks();
 
         $this->gateway = new FortySixElksGateway(
             'some-username',
             'some-password',
             $this->clientMock,
-            $this->messageFactoryMock
+            $this->requestFactoryMock,
+            $this->streamFactoryMock,
         );
     }
 
-    public function testCreateGatewayWithInvalidCredentials()
+    public function testCreateElkGatewayWithInvalidCredentials()
     {
         $this->expectException(\InvalidArgumentException::class);
-        new FortySixElksGateway('', '');
+        new FortySixElksGateway(
+            '',
+            '',
+            $this->clientMock,
+            $this->requestFactoryMock,
+            $this->streamFactoryMock,
+        );
     }
 
-    public function testSendMessage()
+    public function testSendElkMessage2()
     {
         $message = Message::create('46700123001', 'Hello world!', 'Forty6Elks');
 
         $url = 'https://api.46elks.com/a1/SMS';
-        $headers = [
-            'Authorization' => 'Basic c29tZS11c2VybmFtZTpzb21lLXBhc3N3b3Jk',
-            'Content-type' => 'application/x-www-form-urlencoded',
-        ];
-        $query = 'from=Forty6Elks&to=46700123001&message=Hello+world%21';
 
         $requestMock = $this->createMock(RequestInterface::class);
-        $this->messageFactoryMock->expects($this->once())
-            ->method('createRequest')->with('POST', $url, $headers, $query)->willReturn($requestMock);
+        $requestMock->method('withHeader')->willReturnSelf();
+        $requestMock->method('withBody')->willReturnSelf();
+
+        $this->requestFactoryMock->expects($this->once())
+            ->method('createRequest')->with('POST', $url)->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
@@ -85,12 +75,14 @@ class FortySixElksGatewayTest extends TestCase
         $this->assertEquals(1, $message->getSegmentCount());
     }
 
-    public function testSendMessageWithInvalidJsonGeneratesError()
+    public function testSendElkMessageWithInvalidJsonGeneratesError()
     {
         $messageMock = $this->createMock(MessageInterface::class);
 
         $requestMock = $this->createMock(RequestInterface::class);
-        $this->messageFactoryMock->method('createRequest')->willReturn($requestMock);
+        $requestMock->method('withHeader')->willReturnSelf();
+        $requestMock->method('withBody')->willReturnSelf();
+        $this->requestFactoryMock->method('createRequest')->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
@@ -102,12 +94,14 @@ class FortySixElksGatewayTest extends TestCase
         $this->gateway->sendMessage($messageMock);
     }
 
-    public function testSendMessageResonseWithMissingStatusKeyGeneratesError()
+    public function testSendElkMessageResonseWithMissingStatusKeyGeneratesError()
     {
         $messageMock = $this->createMock(MessageInterface::class);
 
         $requestMock = $this->createMock(RequestInterface::class);
-        $this->messageFactoryMock->method('createRequest')->willReturn($requestMock);
+        $requestMock->method('withHeader')->willReturnSelf();
+        $requestMock->method('withBody')->willReturnSelf();
+        $this->requestFactoryMock->method('createRequest')->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
@@ -119,12 +113,14 @@ class FortySixElksGatewayTest extends TestCase
         $this->gateway->sendMessage($messageMock);
     }
 
-    public function testSendMessageResonseWithMissingIdKeyGeneratesError()
+    public function testSendElkMessageResonseWithMissingIdKeyGeneratesError()
     {
         $messageMock = $this->createMock(MessageInterface::class);
 
         $requestMock = $this->createMock(RequestInterface::class);
-        $this->messageFactoryMock->method('createRequest')->willReturn($requestMock);
+        $requestMock->method('withHeader')->willReturnSelf();
+        $requestMock->method('withBody')->willReturnSelf();
+        $this->requestFactoryMock->method('createRequest')->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
@@ -136,7 +132,7 @@ class FortySixElksGatewayTest extends TestCase
         $this->gateway->sendMessage($messageMock);
     }
 
-    public function testSendMessages()
+    public function testSendElkMessages()
     {
         $messages = [
             Message::create('46700123001', 'Hello world!', 'Forty6Elks'),
@@ -144,7 +140,9 @@ class FortySixElksGatewayTest extends TestCase
         ];
 
         $requestMock = $this->createMock(RequestInterface::class);
-        $this->messageFactoryMock->method('createRequest')->willReturn($requestMock);
+        $requestMock->method('withHeader')->willReturnSelf();
+        $requestMock->method('withBody')->willReturnSelf();
+        $this->requestFactoryMock->method('createRequest')->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->clientMock->expects($this->exactly(2))->method('sendRequest')->willReturn($responseMock);
@@ -164,7 +162,7 @@ class FortySixElksGatewayTest extends TestCase
         $this->gateway->sendMessages($messages);
     }
 
-    public function testReceiveSmsMessage()
+    public function testReceiveElkSmsMessage()
     {
         $id = 'sc3b36dc364f9f55ff0dcb52124aeacf7';
         $to = '46700123001';
@@ -185,7 +183,7 @@ class FortySixElksGatewayTest extends TestCase
         $this->assertSame($id, $message->getId());
     }
 
-    public function testReceiveInvalidSmsMessage()
+    public function testReceiveElkInvalidSmsMessage()
     {
         $this->expectException(ReceiveException::class);
 
@@ -207,7 +205,7 @@ class FortySixElksGatewayTest extends TestCase
         $this->assertSame($status, $deliveryReport->getStatus());
     }
 
-    public function testReceiveInvalidDeliveryReport()
+    public function testReceiveElkInvalidDeliveryReport()
     {
         $this->expectException(ReceiveException::class);
 

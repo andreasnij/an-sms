@@ -9,7 +9,6 @@
 
 namespace AnSms\Gateway\Provider;
 
-use AnSms\Gateway\AbstractHttpGateway;
 use AnSms\Gateway\GatewayInterface;
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
@@ -17,44 +16,40 @@ use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
 use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 use AnSms\Message\DeliveryReport\DeliveryReport;
-use Http\Client\Exception\TransferException;
-use Http\Client\HttpClient;
-use Http\Message\MessageFactory;
-use Nexmo\Client\Credentials\Basic as NexmoBasicCredentials;
-use Nexmo\Client as NexmoClient;
-use Nexmo\Client\Exception\Exception as NexmoClientException;
+use InvalidArgumentException;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
+use Vonage\Client\Credentials\Basic as VonageBasicCredentials;
+use Vonage\Client as VonageClient;
+use Vonage\Client\Exception\Exception as VonageClientException;
 
 /**
- * Nexmo SMS gateway provider.
+ * Vonage SMS gateway provider.
  */
-class NexmoGateway extends AbstractHttpGateway implements GatewayInterface
+class VonageGateway implements GatewayInterface
 {
-    /** @var NexmoClient $nexmoClient */
-    protected $nexmoClient;
+    protected VonageClient $vonageClient;
 
     public function __construct(
         string $apiKey,
         string $apiSecret,
-        HttpClient $httpClient = null,
-        MessageFactory $messageFactory = null,
-        NexmoClient $nexmoClient = null
+        ?VonageClient $vonageClient = null,
+        ?ClientInterface $httpClient = null,
     ) {
-        parent::__construct($httpClient, $messageFactory);
-
         if (empty($apiKey) || empty($apiSecret)) {
-            throw new \InvalidArgumentException('Nexmo API key and secret are required');
+            throw new InvalidArgumentException('Vonage API key and secret are required');
         }
 
-        $this->nexmoClient = $nexmoClient;
-        if ($nexmoClient === null) {
-            $credentials = new NexmoBasicCredentials($apiKey, $apiSecret);
-            $this->nexmoClient = new NexmoClient($credentials);
+        $this->vonageClient = $vonageClient;
+        if ($vonageClient === null) {
+            $credentials = new VonageBasicCredentials($apiKey, $apiSecret);
+            $this->vonageClient = new VonageClient($credentials, [], $httpClient);
         }
     }
 
-    public function getNexmoClient(): NexmoClient
+    public function getVonageClient(): VonageClient
     {
-        return $this->nexmoClient;
+        return $this->vonageClient;
     }
 
     /**
@@ -64,14 +59,14 @@ class NexmoGateway extends AbstractHttpGateway implements GatewayInterface
     public function sendMessage(MessageInterface $message): void
     {
         try {
-            $nexmoMessage = $this->nexmoClient->message()->send([
+            $vonageMessage = $this->vonageClient->message()->send([
                 'to' => $message->getTo(),
                 'text' => $message->getText(),
                 'from' => $message->getFrom(),
             ]);
 
-            $message->setId($nexmoMessage->getMessageId());
-        } catch (TransferException | NexmoClientException $e) {
+            $message->setId($vonageMessage->getMessageId());
+        } catch (ClientExceptionInterface | VonageClientException $e) {
             throw new SendException($e->getMessage(), 0, $e);
         }
     }
