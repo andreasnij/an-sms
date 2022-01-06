@@ -7,22 +7,21 @@
  * @license   MIT
  */
 
-namespace AnSms\Gateway\Provider;
+namespace AnSms\Gateway;
 
-use AnSms\Gateway\GatewayInterface;
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
+use AnSms\Message\DeliveryReport\DeliveryReport;
+use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
-use AnSms\Message\DeliveryReport\DeliveryReportInterface;
-use AnSms\Message\DeliveryReport\DeliveryReport;
 use InvalidArgumentException;
-use Twilio\Rest\Client as TwilioClient;
 use Twilio\Exceptions\TwilioException;
+use Twilio\Rest\Client as TwilioClient;
 use Twilio\Values;
 
 /**
- * Twilio SMS gateway provider.
+ * Twilio SMS gateway.
  */
 class TwilioGateway implements GatewayInterface
 {

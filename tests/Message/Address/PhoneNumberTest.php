@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 class PhoneNumberTest extends TestCase
 {
     /**
-     * @dataProvider createProvider
+     * @dataProvider phoneNumberDataProvider
      */
     public function testCanPhoneNumberBeCreated(
         string $testPhoneNumber,
@@ -25,7 +25,7 @@ class PhoneNumberTest extends TestCase
         $this->assertSame($expectedResult, (string) $phoneNumber);
     }
 
-    public function createProvider(): array
+    public function phoneNumberDataProvider(): array
     {
         return [
             ['46700123456', true, '46700123456'],

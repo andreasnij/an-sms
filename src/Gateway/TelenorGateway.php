@@ -7,20 +7,18 @@
  * @license   MIT
  */
 
-namespace AnSms\Gateway\Provider;
+namespace AnSms\Gateway;
 
-use AnSms\Gateway\AbstractHttpGateway;
-use AnSms\Gateway\GatewayInterface;
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
 use AnSms\Message\Address\Alphanumeric;
 use AnSms\Message\Address\PhoneNumber;
+use AnSms\Message\DeliveryReport\DeliveryReport;
+use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
-use AnSms\Message\DeliveryReport\DeliveryReportInterface;
-use AnSms\Message\DeliveryReport\DeliveryReport;
-use DOMElement;
 use DOMDocument;
+use DOMElement;
 use InvalidArgumentException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
@@ -28,7 +26,7 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
 /**
- * Telenor SMS Pro SMS gateway provider.
+ * Telenor SMS Pro SMS gateway.
  */
 class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
 {

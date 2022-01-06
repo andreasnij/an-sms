@@ -1,10 +1,10 @@
 <?php
 
-namespace AnSms\Tests\Gateway\Provider;
+namespace AnSms\Tests\Gateway;
 
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
-use AnSms\Gateway\Provider\FortySixElksGateway;
+use AnSms\Gateway\FortySixElksGateway;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
 use PHPUnit\Framework\TestCase;

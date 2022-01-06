@@ -7,16 +7,14 @@
  * @license   MIT
  */
 
-namespace AnSms\Gateway\Provider;
+namespace AnSms\Gateway;
 
-use AnSms\Gateway\AbstractHttpGateway;
-use AnSms\Gateway\GatewayInterface;
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
+use AnSms\Message\DeliveryReport\DeliveryReport;
+use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
-use AnSms\Message\DeliveryReport\DeliveryReportInterface;
-use AnSms\Message\DeliveryReport\DeliveryReport;
 use InvalidArgumentException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
@@ -24,7 +22,7 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
 /**
- * 46Elks SMS gateway provider.
+ * 46Elks SMS gateway.
  */
 class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterface
 {

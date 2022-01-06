@@ -1,17 +1,17 @@
 <?php
 
-namespace AnSms\Tests\Gateway\Provider;
+namespace AnSms\Tests\Gateway;
 
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
-use AnSms\Gateway\Provider\TwilioGateway;
+use AnSms\Gateway\TwilioGateway;
 use AnSms\Message\Message;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Twilio\Rest\Client as TwilioClient;
-use Twilio\Rest\Api\V2010\Account\MessageList as TwilioMessageList;
-use Twilio\Rest\Api\V2010\Account\MessageInstance as TwilioMessage;
 use Twilio\Exceptions\TwilioException;
+use Twilio\Rest\Api\V2010\Account\MessageInstance as TwilioMessage;
+use Twilio\Rest\Api\V2010\Account\MessageList as TwilioMessageList;
+use Twilio\Rest\Client as TwilioClient;
 
 class TwilioGatewayTest extends TestCase
 {

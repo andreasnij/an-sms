@@ -7,19 +7,17 @@
  * @license   MIT
  */
 
-namespace AnSms\Gateway\Provider;
+namespace AnSms\Gateway;
 
-use AnSms\Gateway\AbstractHttpGateway;
-use AnSms\Gateway\GatewayInterface;
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
 use AnSms\Message\Address\AddressInterface;
 use AnSms\Message\Address\Alphanumeric;
 use AnSms\Message\Address\ShortCode;
+use AnSms\Message\DeliveryReport\DeliveryReport;
+use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
-use AnSms\Message\DeliveryReport\DeliveryReportInterface;
-use AnSms\Message\DeliveryReport\DeliveryReport;
 use AnSms\Message\PremiumMessageInterface;
 use InvalidArgumentException;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -28,7 +26,7 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
 /**
- * Cellsynt SMS and Premium SMS gateway provider.
+ * Cellsynt SMS and Premium SMS gateway.
  */
 class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
 {

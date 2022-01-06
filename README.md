@@ -2,7 +2,7 @@
 
 [![Version](http://img.shields.io/packagist/v/jandreasn/an-sms.svg?style=flat-square)](https://packagist.org/packages/jandreasn/an-sms)
 
-An extendable library for sending and receiving SMS messages. Currently comes packaged with these gateway providers:
+An extendable library for sending and receiving SMS messages. Currently comes packaged with these gateways:
 
 <br>
 
@@ -15,7 +15,7 @@ An extendable library for sending and receiving SMS messages. Currently comes pa
 | [Telenor SMS Pro](https://www.smspro.se/)         |    ✔     |       ✔          |             |             |
 
 
-You can add and use your own gateway provider. This library enables easy switching between different gateways.
+You can add and use your own gateway. This library enables easy switching between different gateways.
 
 
 ## Installation
@@ -29,13 +29,13 @@ requires implementations of **PSR-7**: HTTP message interfaces, **PSR-17**: HTTP
 **PSR-18**: HTTP Client, which Guzzle provides. You may choose to use any other provider implementing these interfaces.
 The package is not dependant on Guzzle, just the PSR interfaces.
 
-If you want to use the **Twilio** gateway provider you also need to install the Twilio SDK:
+If you want to use the **Twilio** gateway you also need to install the Twilio SDK:
 
 ```bash
 $ composer require twilio/sdk
 ```
 
-If you want to use the **Vonage** gateway provider you also need to install the Vonage client:
+If you want to use the **Vonage** gateway you also need to install the Vonage client:
 
 ```bash
 $ composer require vonage/client-core
@@ -49,7 +49,7 @@ use AnSms\{
     SmsTransceiver,
     Message\Message,
     Message\PremiumMessage,
-    Gateway\Provider\CellsyntGateway
+    Gateway\CellsyntGateway
 };
 
 $gateway = new CellsyntGateway('username', 'password');

@@ -1,18 +1,18 @@
 <?php
 
-namespace AnSms\Tests\Gateway\Provider;
+namespace AnSms\Tests\Gateway;
 
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
-use AnSms\Gateway\Provider\VonageGateway;
+use AnSms\Gateway\VonageGateway;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Vonage\Client as VonageClient;
+use Vonage\Client\Exception\Exception as VonageClientException;
 use Vonage\Message\Client as VonageMessageClient;
 use Vonage\Message\Message as VonageMessage;
-use Vonage\Client\Exception\Exception as VonageClientException;
 
 class VonageGatewayTest extends TestCase
 {

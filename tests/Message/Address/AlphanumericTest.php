@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 class AlphanumericTest extends TestCase
 {
     /**
-     * @dataProvider createProvider
+     * @dataProvider alphanumericDataProvider
      */
     public function testCanAlphanumericBeCreated(string $value, bool $expectException = false): void
     {
@@ -22,7 +22,7 @@ class AlphanumericTest extends TestCase
         $this->assertSame($value, (string) $alphanumeric);
     }
 
-    public function createProvider(): array
+    public function alphanumericDataProvider(): array
     {
         return [
             ['abc123'],

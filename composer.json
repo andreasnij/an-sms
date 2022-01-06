@@ -1,7 +1,7 @@
 {
     "name": "jandreasn/an-sms",
     "type": "library",
-    "description": "A PHP library to send and receive SMS text messages through various providers/gateways.",
+    "description": "A PHP library to send and receive SMS text messages through various gateways/providers.",
     "keywords": [
         "sms",
         "psms",
@@ -46,8 +46,8 @@
         "phpstan/phpstan": "^1.3"
     },
     "suggest": {
-        "twilio/sdk": "Required to use the Twilio gateway provider",
-        "vonage/client-core": "Required to use the Vonage gateway provider"
+        "twilio/sdk": "Required to use the Twilio gateway",
+        "vonage/client-core": "Required to use the Vonage gateway"
     },
     "scripts": {
         "phpcs": "vendor/bin/phpcs",

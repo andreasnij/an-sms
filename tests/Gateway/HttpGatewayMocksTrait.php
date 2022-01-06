@@ -1,6 +1,6 @@
 <?php
 
-namespace AnSms\Tests\Gateway\Provider;
+namespace AnSms\Tests\Gateway;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Client\ClientInterface;

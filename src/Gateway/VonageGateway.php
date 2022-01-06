@@ -7,24 +7,23 @@
  * @license   MIT
  */
 
-namespace AnSms\Gateway\Provider;
+namespace AnSms\Gateway;
 
-use AnSms\Gateway\GatewayInterface;
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
+use AnSms\Message\DeliveryReport\DeliveryReport;
+use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
-use AnSms\Message\DeliveryReport\DeliveryReportInterface;
-use AnSms\Message\DeliveryReport\DeliveryReport;
 use InvalidArgumentException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
-use Vonage\Client\Credentials\Basic as VonageBasicCredentials;
 use Vonage\Client as VonageClient;
+use Vonage\Client\Credentials\Basic as VonageBasicCredentials;
 use Vonage\Client\Exception\Exception as VonageClientException;
 
 /**
- * Vonage SMS gateway provider.
+ * Vonage SMS gateway.
  */
 class VonageGateway implements GatewayInterface
 {

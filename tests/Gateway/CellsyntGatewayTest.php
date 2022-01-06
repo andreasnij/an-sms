@@ -1,10 +1,10 @@
 <?php
 
-namespace AnSms\Tests\Gateway\Provider;
+namespace AnSms\Tests\Gateway;
 
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
-use AnSms\Gateway\Provider\CellsyntGateway;
+use AnSms\Gateway\CellsyntGateway;
 use AnSms\Message\Address\AddressInterface;
 use AnSms\Message\Address\Alphanumeric;
 use AnSms\Message\Address\PhoneNumber;
@@ -206,7 +206,7 @@ class CellsyntGatewayTest extends TestCase
     }
 
     /**
-     * @dataProvider addressTypeProvider
+     * @dataProvider addressTypeDataProvider
      */
     public function testGetCellsyntOriginatorTypeReturnsCorrectType(
         AddressInterface $address,
@@ -220,7 +220,7 @@ class CellsyntGatewayTest extends TestCase
         $this->assertSame($expectedType, $type);
     }
 
-    public function addressTypeProvider(): array
+    public function addressTypeDataProvider(): array
     {
         return [
             [new PhoneNumber('46700123456'), 'numeric'],
