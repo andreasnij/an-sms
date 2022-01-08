@@ -6,7 +6,7 @@ An extendable library for sending and receiving SMS messages. Currently comes pa
 
 <br>
 
-|                                            | Send SMS | Delivery reports | Receive SMS | Premium SMS |
+|                                                   | Send SMS | Delivery reports | Receive SMS | Premium SMS |
 |---------------------------------------------------|:--------:|:----------------:|:-----------:|:-----------:|
 | [46elks](https://46elks.com/)                     |    ✔     |       ✔          |      ✔      |             |
 | [Cellsynt](https://www.cellsynt.com)              |    ✔     |       ✔          |      ✔      |      ✔      |
@@ -83,7 +83,7 @@ $smsTransceiver->sendMessage($premiumMessage);
 Please see [UPGRADING](UPGRADING.md) for details.
 
 ## Author
-Andreas Nilsson (<http://github.com/jandreasn>)
+Andreas Nilsson (<https://github.com/andreasnij>)
 
 ## License
 This software is licensed under the MIT license - see the [LICENSE](LICENSE.md) file for details.
