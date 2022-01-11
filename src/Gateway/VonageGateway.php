@@ -87,9 +87,9 @@ class VonageGateway implements GatewayInterface
     /**
      * @throws ReceiveException
      */
-    public function receiveMessage(mixed $data): MessageInterface
+    public function receiveMessage(array $data): MessageInterface
     {
-        if (!is_array($data) || empty($data['text']) || empty($data['to'])
+        if (empty($data['text']) || empty($data['to'])
             || empty($data['msisdn']) || empty($data['messageId'])
         ) {
             throw new ReceiveException(sprintf(
@@ -112,9 +112,9 @@ class VonageGateway implements GatewayInterface
     /**
      * @throws ReceiveException
      */
-    public function receiveDeliveryReport(mixed $data): DeliveryReportInterface
+    public function receiveDeliveryReport(array $data): DeliveryReportInterface
     {
-        if (!is_array($data) || empty($data['messageId']) || empty($data['status'])) {
+        if (empty($data['messageId']) || empty($data['status'])) {
             throw new ReceiveException(sprintf(
                 'Invalid message delivery report data. Data received: %s',
                 var_export($data, true)

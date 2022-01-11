@@ -41,15 +41,8 @@ class NullGateway implements GatewayInterface
     /**
      * @throws ReceiveException
      */
-    public function receiveMessage(mixed $data): MessageInterface
+    public function receiveMessage(array $data): MessageInterface
     {
-        if (!is_array($data)) {
-            throw new ReceiveException(sprintf(
-                'Invalid receive message data. Data received: %s',
-                var_export($data, true)
-            ));
-        }
-
         $message = Message::create(
             $data['to'] ?? '46700000000',
             $data['text'] ?? '-',
@@ -64,15 +57,8 @@ class NullGateway implements GatewayInterface
     /**
      * @throws ReceiveException
      */
-    public function receiveDeliveryReport(mixed $data): DeliveryReportInterface
+    public function receiveDeliveryReport(array $data): DeliveryReportInterface
     {
-        if (!is_array($data)) {
-            throw new ReceiveException(sprintf(
-                'Invalid message delivery report data. Data received: %s',
-                var_export($data, true)
-            ));
-        }
-
         return new DeliveryReport(
             $data['trackingid'] ?? '',
             $data['status'] ??  ''

@@ -118,9 +118,9 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
     /**
      * @throws ReceiveException
      */
-    public function receiveMessage(mixed $data): MessageInterface
+    public function receiveMessage(array $data): MessageInterface
     {
-        if (!is_array($data) || empty($data['id']) || empty($data['from'])
+        if (empty($data['id']) || empty($data['from'])
             || empty($data['to']) || empty($data['message'])
         ) {
             throw new ReceiveException(sprintf(
@@ -143,9 +143,9 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
     /**
      * @throws ReceiveException
      */
-    public function receiveDeliveryReport(mixed $data): DeliveryReportInterface
+    public function receiveDeliveryReport(array $data): DeliveryReportInterface
     {
-        if (!is_array($data) || empty($data['id']) || empty($data['status'])) {
+        if (empty($data['id']) || empty($data['status'])) {
             throw new ReceiveException(sprintf(
                 'Invalid message delivery report data. Data received: %s',
                 var_export($data, true)

@@ -58,5 +58,10 @@
             "@phpstan",
             "@phpunit"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
     }
 }

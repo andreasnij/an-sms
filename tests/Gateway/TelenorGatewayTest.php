@@ -122,14 +122,14 @@ class TelenorGatewayTest extends TestCase
         $id = '12345';
         $status = 'SMS SENT';
 
-        $data = "<mobilectrl_delivery_status>
+        $xml = "<mobilectrl_delivery_status>
              <mobilectrl_id>{$id}</mobilectrl_id>
              <status>0</status>
              <delivery_status>-2</delivery_status>
              <message>{$status}</message>
             </mobilectrl_delivery_status>";
 
-        $deliveryReport = $this->gateway->receiveDeliveryReport($data);
+        $deliveryReport = $this->gateway->receiveDeliveryReport(['xml' => $xml]);
 
         $this->assertSame($id, $deliveryReport->getId());
         $this->assertSame($status, $deliveryReport->getStatus());
@@ -139,6 +139,6 @@ class TelenorGatewayTest extends TestCase
     {
         $this->expectException(ReceiveException::class);
 
-        $this->gateway->receiveDeliveryReport('');
+        $this->gateway->receiveDeliveryReport([]);
     }
 }

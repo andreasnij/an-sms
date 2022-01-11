@@ -30,10 +30,10 @@ interface GatewayInterface
     /**
      * @throws ReceiveException
      */
-    public function receiveMessage(mixed $data): MessageInterface;
+    public function receiveMessage(array $data): MessageInterface;
 
     /**
      * @throws ReceiveException
      */
-    public function receiveDeliveryReport(mixed $data): DeliveryReportInterface;
+    public function receiveDeliveryReport(array $data): DeliveryReportInterface;
 }

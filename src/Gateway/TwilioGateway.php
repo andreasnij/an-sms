@@ -83,9 +83,9 @@ class TwilioGateway implements GatewayInterface
     /**
      * @throws ReceiveException
      */
-    public function receiveMessage(mixed $data): MessageInterface
+    public function receiveMessage(array $data): MessageInterface
     {
-        if (!is_array($data) || empty($data['To']) || empty($data['Body'])
+        if (empty($data['To']) || empty($data['Body'])
             || empty($data['From']) || empty($data['MessageSid'])
         ) {
             throw new ReceiveException(sprintf(
@@ -108,9 +108,9 @@ class TwilioGateway implements GatewayInterface
     /**
      * @throws ReceiveException
      */
-    public function receiveDeliveryReport(mixed $data): DeliveryReportInterface
+    public function receiveDeliveryReport(array $data): DeliveryReportInterface
     {
-        if (!is_array($data) || empty($data['MessageSid']) || empty($data['MessageStatus'])) {
+        if (empty($data['MessageSid']) || empty($data['MessageStatus'])) {
             throw new ReceiveException(sprintf(
                 'Invalid message delivery report data. Data received: %s',
                 var_export($data, true)

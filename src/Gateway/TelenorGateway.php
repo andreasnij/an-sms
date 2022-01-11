@@ -160,7 +160,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
     /**
      * Not implemented/available.
      */
-    public function receiveMessage(mixed $data): MessageInterface
+    public function receiveMessage(array $data): MessageInterface
     {
         throw new \LogicException('Not implemented');
     }
@@ -168,24 +168,24 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
     /**
      * @throws ReceiveException
      */
-    public function receiveDeliveryReport(mixed $data): DeliveryReportInterface
+    public function receiveDeliveryReport(array $data): DeliveryReportInterface
     {
-        if (!is_string($data)) {
+        if (empty($data['xml']) || !is_string($data['xml'])) {
             throw new ReceiveException(sprintf(
                 'Invalid message delivery report data. Data received: %s',
                 var_export($data, true)
             ));
         }
 
-        $xml = @simplexml_load_string($data);
+        $xml = @simplexml_load_string($data['xml']);
         if ($xml === false) {
-            throw new ReceiveException('Could not parse delivery report XML: ' . $data);
+            throw new ReceiveException('Could not parse delivery report XML: ' . var_export($data, true));
         }
 
         if (empty($xml->mobilectrl_id) || empty($xml->message)) {
             throw new ReceiveException(sprintf(
                 'Invalid delivery report data. Data received: %s',
-                $data
+                var_export($data, true)
             ));
         }
 

@@ -75,7 +75,7 @@ class SmsTransceiver implements SmsTransceiverInterface
     /**
      * @throws ReceiveException
      */
-    public function receiveMessage(mixed $data): MessageInterface
+    public function receiveMessage(array $data): MessageInterface
     {
         $message = $this->gateway->receiveMessage($data);
 
@@ -89,7 +89,7 @@ class SmsTransceiver implements SmsTransceiverInterface
     /**
      * @throws ReceiveException
      */
-    public function receiveDeliveryReport(mixed $data): DeliveryReportInterface
+    public function receiveDeliveryReport(array $data): DeliveryReportInterface
     {
         $deliveryReport = $this->gateway->receiveDeliveryReport($data);
 
