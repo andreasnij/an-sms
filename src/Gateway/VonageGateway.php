@@ -60,9 +60,9 @@ class VonageGateway implements GatewayInterface
     {
         try {
             $vonageMessage = $this->vonageClient->message()->send([
-                'to' => $message->getTo(),
+                'to' => (string) $message->getTo(),
                 'text' => $message->getText(),
-                'from' => $message->getFrom(),
+                'from' => $message->getFrom() ? (string) $message->getFrom() : null,
             ]);
 
             if (($messageId = $vonageMessage->getMessageId())) {
