@@ -9,45 +9,46 @@
 
 namespace AnSms\Gateway;
 
-use Http\Client\HttpClient;
-use Http\Discovery\HttpClientDiscovery;
-use Http\Discovery\MessageFactoryDiscovery;
-use Http\Message\MessageFactory;
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
-/**
- * @author Andreas Nilsson <http://github.com/jandreasn>
- */
 abstract class AbstractHttpGateway
 {
-    /**
-     * @var HttpClient
-     */
-    protected $httpClient;
+    protected ClientInterface $httpClient;
+    protected RequestFactoryInterface $requestFactory;
+    protected StreamFactoryInterface $streamFactory;
 
     /**
-     * @var MessageFactory
+     * @param ClientInterface|null $httpClient Client to do HTTP requests.
+     *                                         Auto discovery will be used if not provided.
+     * @param RequestFactoryInterface|null $requestFactory Factory to create PSR-7 http request.
+     *                                                     Auto discovery will be used if not provided.
      */
-    protected $messageFactory;
-
-   /**
-     * @param HttpClient|null     $httpClient     Client to do HTTP requests.
-     *                                            Auto discovery will be used if not provided.
-     * @param MessageFactory|null $messageFactory Factory to create PSR-7 http messages.
-     *                                            Auto discovery will be used if not provided.
-     */
-    public function __construct(HttpClient $httpClient = null, MessageFactory $messageFactory = null)
-    {
-        $this->httpClient = $httpClient ?: HttpClientDiscovery::find();
-        $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
+    public function __construct(
+        ?ClientInterface $httpClient = null,
+        ?RequestFactoryInterface $requestFactory = null,
+        ?StreamFactoryInterface $streamFactory = null,
+    ) {
+        $this->httpClient = $httpClient ?? Psr18ClientDiscovery::find();
+        $this->requestFactory = $requestFactory ?? Psr17FactoryDiscovery::findRequestFactory();
+        $this->streamFactory = $streamFactory ?? Psr17FactoryDiscovery::findStreamFactory();
     }
 
-    public function getHttpClient(): HttpClient
+    public function getHttpClient(): ClientInterface
     {
         return $this->httpClient;
     }
 
-    public function getMessageFactory(): MessageFactory
+    public function getRequestFactory(): RequestFactoryInterface
     {
-        return $this->messageFactory;
+        return $this->requestFactory;
+    }
+
+    public function getStreamFactory(): StreamFactoryInterface
+    {
+        return $this->streamFactory;
     }
 }

@@ -13,8 +13,6 @@ namespace AnSms\Message;
 
 /**
  * Interface for a premium SMS text message.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
  */
 interface PremiumMessageInterface extends MessageInterface
 {

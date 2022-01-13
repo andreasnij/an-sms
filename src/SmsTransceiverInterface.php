@@ -18,13 +18,10 @@ use Psr\Log\LoggerAwareInterface;
 
 /**
  * Interface for sending and receiving SMS text messages.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
  */
 interface SmsTransceiverInterface extends LoggerAwareInterface
 {
     /**
-     * @param MessageInterface $message
      * @throws SendException
      */
     public function sendMessage(MessageInterface $message) : void;
@@ -36,21 +33,14 @@ interface SmsTransceiverInterface extends LoggerAwareInterface
     public function sendMessages(array $messages): void;
 
     /**
-     * @param mixed $data
-     * @return MessageInterface
      * @throws ReceiveException
      */
-    public function receiveMessage($data) : MessageInterface;
+    public function receiveMessage(array $data) : MessageInterface;
 
     /**
-     * @param mixed $data
-     * @return DeliveryReportInterface
      * @throws ReceiveException
      */
-    public function receiveDeliveryReport($data) : DeliveryReportInterface;
+    public function receiveDeliveryReport(array $data) : DeliveryReportInterface;
 
-    /**
-     * @param $defaultFrom AddressInterface|string|null
-     */
-    public function setDefaultFrom($defaultFrom): void;
+    public function setDefaultFrom(AddressInterface|string|null $defaultFrom): void;
 }

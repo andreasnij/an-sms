@@ -9,15 +9,9 @@
 
 namespace AnSms\Message\Address;
 
-/**
- * @author Andreas Nilsson <http://github.com/jandreasn>
- */
 abstract class AbstractAddress implements AddressInterface
 {
-    /**
-     * @var string
-     */
-    protected $value;
+    protected string $value;
 
     public function get(): string
     {

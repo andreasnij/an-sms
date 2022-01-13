@@ -7,91 +7,56 @@
  * @license   MIT
  */
 
-namespace AnSms\Gateway\Provider;
+namespace AnSms\Gateway;
 
-use AnSms\Gateway\AbstractHttpGateway;
-use AnSms\Gateway\GatewayInterface;
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
 use AnSms\Message\Address\Alphanumeric;
 use AnSms\Message\Address\PhoneNumber;
+use AnSms\Message\DeliveryReport\DeliveryReport;
+use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
-use AnSms\Message\DeliveryReport\DeliveryReportInterface;
-use AnSms\Message\DeliveryReport\DeliveryReport;
-use DOMElement;
-use Http\Client\Exception\TransferException;
-use Http\Client\HttpClient;
-use Http\Message\MessageFactory;
 use DOMDocument;
+use DOMElement;
+use InvalidArgumentException;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 /**
- * Telenor SMS Pro SMS gateway provider.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
+ * Telenor SMS Pro SMS gateway.
  */
 class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
 {
     protected const API_ENDPOINT_TEMPLATE = 'https://sms-pro.net:44343/services/%s/sendsms';
 
-    /**
-     * @var string
-     */
-    protected $username;
-
-    /**
-     * @var string
-     */
-    protected $password;
-
-    /**
-     * @var string
-     */
-    protected $customerId;
-
-    /**
-     * @var string
-     */
-    protected $customerPassword;
-
-    /**
-     * @var string|null
-     */
-    private $supplementaryInformation;
-
     public function __construct(
-        string $username,
-        string $password,
-        string $customerId,
-        string $customerPassword,
-        string $supplementaryInformation = null,
-        HttpClient $httpClient = null,
-        MessageFactory $messageFactory = null
+        protected string $username,
+        protected string $password,
+        protected string $customerId,
+        protected string $customerPassword,
+        protected ?string $supplementaryInformation = null,
+        ?ClientInterface $httpClient = null,
+        ?RequestFactoryInterface $requestFactory = null,
+        ?StreamFactoryInterface $streamFactory = null,
     ) {
-        parent::__construct($httpClient, $messageFactory);
+        parent::__construct($httpClient, $requestFactory, $streamFactory);
 
         if (empty($username) || empty($password) || empty($customerId) || empty($customerPassword)) {
-            throw new \InvalidArgumentException('Sms Pro username and password, customer id and password are required');
+            throw new InvalidArgumentException('Sms Pro username and password, customer id and password are required');
         }
-
-        $this->username = $username;
-        $this->password = $password;
-        $this->customerId = $customerId;
-        $this->customerPassword = $customerPassword;
-        $this->supplementaryInformation = $supplementaryInformation;
     }
+
     /**
-     * @param MessageInterface $message
      * @throws SendException
      */
     public function sendMessage(MessageInterface $message): void
     {
-        $request = $this->messageFactory->createRequest(
-            'POST',
-            $this->getApiEndpoint(),
-            $this->getHeaders(),
-            $this->buildSendBody($message)
-        );
+        $request = $this->requestFactory->createRequest('POST', $this->getApiEndpoint())
+            ->withHeader('Authorization', $this->getAuthorizationHeaderValue())
+            ->withBody($this->streamFactory->createStream($this->buildSendBody($message)));
 
         try {
             $response = $this->httpClient->sendRequest($request);
@@ -99,7 +64,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
             $content = (string) $response->getBody();
             $trackingId = $this->parseSendResponseContent($content);
             $message->setId($trackingId);
-        } catch (TransferException $e) {
+        } catch (ClientExceptionInterface $e) {
             throw new SendException($e->getMessage(), 0, $e);
         }
     }
@@ -109,13 +74,9 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
         return sprintf(self::API_ENDPOINT_TEMPLATE, $this->customerId);
     }
 
-    protected function getHeaders(): array
+    protected function getAuthorizationHeaderValue(): string
     {
-        $headers = [
-            'Authorization' => 'Basic ' . base64_encode(sprintf('%s:%s', $this->username, $this->password))
-        ];
-
-        return $headers;
+        return 'Basic ' . base64_encode(sprintf('%s:%s', $this->username, $this->password));
     }
 
     protected function buildSendBody(MessageInterface $message): string
@@ -148,7 +109,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
 
         $xml->appendChild($mobileCtrlSms);
 
-        return $xml->saveXML();
+        return (string) $xml->saveXML();
     }
 
     protected function getMessageFromXmlChild(MessageInterface $message, DOMDocument $xmlDocument): ?DOMElement
@@ -167,9 +128,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
     }
 
     /**
-     * @param string $content
      * @throws SendException
-     * @return string
      */
     protected function parseSendResponseContent(string $content): string
     {
@@ -179,7 +138,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
         }
 
         if (!isset($xml->status) || (int) $xml->status !== 0) {
-            throw new SendException('Send message failed with error: ' . $xml->message ?? '');
+            throw new SendException('Send message failed with error: ' . ($xml->message ?? ''));
         }
 
         $trackingId = (string) $xml->mobilectrl_id;
@@ -199,27 +158,34 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Not implemented/available.
      */
-    public function receiveMessage($data): MessageInterface
+    public function receiveMessage(array $data): MessageInterface
     {
         throw new \LogicException('Not implemented');
     }
 
     /**
-     * {@inheritdoc}
+     * @throws ReceiveException
      */
-    public function receiveDeliveryReport($data): DeliveryReportInterface
+    public function receiveDeliveryReport(array $data): DeliveryReportInterface
     {
-        $xml = @simplexml_load_string($data);
+        if (empty($data['xml']) || !is_string($data['xml'])) {
+            throw new ReceiveException(sprintf(
+                'Invalid message delivery report data. Data received: %s',
+                var_export($data, true)
+            ));
+        }
+
+        $xml = @simplexml_load_string($data['xml']);
         if ($xml === false) {
-            throw new ReceiveException('Could not parse delivery report XML: ' . $data);
+            throw new ReceiveException('Could not parse delivery report XML: ' . var_export($data, true));
         }
 
         if (empty($xml->mobilectrl_id) || empty($xml->message)) {
             throw new ReceiveException(sprintf(
                 'Invalid delivery report data. Data received: %s',
-                $data
+                var_export($data, true)
             ));
         }
 

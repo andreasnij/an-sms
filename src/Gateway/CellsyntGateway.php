@@ -7,69 +7,54 @@
  * @license   MIT
  */
 
-namespace AnSms\Gateway\Provider;
+namespace AnSms\Gateway;
 
-use AnSms\Gateway\AbstractHttpGateway;
-use AnSms\Gateway\GatewayInterface;
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
 use AnSms\Message\Address\AddressInterface;
 use AnSms\Message\Address\Alphanumeric;
 use AnSms\Message\Address\ShortCode;
+use AnSms\Message\DeliveryReport\DeliveryReport;
+use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
-use AnSms\Message\DeliveryReport\DeliveryReportInterface;
-use AnSms\Message\DeliveryReport\DeliveryReport;
 use AnSms\Message\PremiumMessageInterface;
-use Http\Client\Exception\TransferException;
-use Http\Client\HttpClient;
-use Http\Message\MessageFactory;
+use InvalidArgumentException;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 /**
- * Cellsynt SMS and Premium SMS gateway provider.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
+ * Cellsynt SMS and Premium SMS gateway.
  */
 class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
 {
     protected const SMS_API_ENDPOINT = 'https://se-1.cellsynt.net/sms.php';
     protected const PSMS_API_ENDPOINT = 'https://se-2.cellsynt.net/sendsms.php';
 
-    /**
-     * @var string
-     */
-    protected $username;
-
-    /**
-     * @var string
-     */
-    protected $password;
-
     public function __construct(
-        string $username,
-        string $password,
-        HttpClient $httpClient = null,
-        MessageFactory $messageFactory = null
+        protected string $username,
+        protected string $password,
+        ?ClientInterface $httpClient = null,
+        ?RequestFactoryInterface $requestFactory = null,
+        ?StreamFactoryInterface $streamFactory = null,
     ) {
-        parent::__construct($httpClient, $messageFactory);
+        parent::__construct($httpClient, $requestFactory, $streamFactory);
 
         if (empty($username) || empty($password)) {
-            throw new \InvalidArgumentException('Cellsynt username and password are required');
+            throw new InvalidArgumentException('Cellsynt username and password are required');
         }
-
-        $this->username = $username;
-        $this->password = $password;
     }
 
     /**
-     * @param MessageInterface $message
      * @throws SendException
      */
     public function sendMessage(MessageInterface $message): void
     {
         $queryData = $this->buildSendQueryData($message);
         $query = http_build_query($queryData, '', '&');
-        $request = $this->messageFactory->createRequest(
+        $request = $this->requestFactory->createRequest(
             'GET',
             $this->getApiEndpoint($message) . '?' . $query
         );
@@ -80,7 +65,7 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
 
             $trackingId = $this->parseSendResponseContent($content);
             $message->setId($trackingId);
-        } catch (TransferException $e) {
+        } catch (ClientExceptionInterface $e) {
             throw new SendException($e->getMessage(), 0, $e);
         }
     }
@@ -136,9 +121,7 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
     }
 
     /**
-     * @param string $content
      * @throws SendException
-     * @return string
      */
     protected function parseSendResponseContent(string $content): string
     {
@@ -190,12 +173,17 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
      * For premium SMS: /psms/incoming?country=se&operator=telia&shortcode=72456&
      * sender=0046700123456&text=ABC+test!&sessionid=1:1136364712521:0046700123456
      *
-     * @param array $data
      * @throws ReceiveException
-     * @return MessageInterface
      */
-    public function receiveMessage($data): MessageInterface
+    public function receiveMessage(array $data): MessageInterface
     {
+        if (!is_array($data)) {
+            throw new ReceiveException(sprintf(
+                'Invalid receive message data. Data received: %s',
+                var_export($data, true)
+            ));
+        }
+
         if (isset($data['sessionid'])) {
             return $this->receivePremiumSmsMessage($data);
         }
@@ -210,13 +198,13 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
      * For premium SMS: /psms/incoming?country=se&operator=telia&shortcode=72456&
      * sender=0046700123456&text=ABC+test!&sessionid=1:1136364712521:0046700123456
      *
-     * @param array $data
      * @throws ReceiveException
-     * @return MessageInterface
      */
-    protected function receiveSmsMessage($data): MessageInterface
+    protected function receiveSmsMessage(array $data): MessageInterface
     {
-        if (empty($data['text']) || empty($data['destination']) || empty($data['originator'])) {
+        if (empty($data['text']) || empty($data['destination'])
+            || empty($data['originator'])
+        ) {
             throw new ReceiveException(sprintf(
                 'Invalid receive message data. Data received: %s',
                 var_export($data, true)
@@ -242,11 +230,9 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
      * Cellsynt example request: Example request: /psms/incoming?country=se&operator=telia&shortcode=72456&
      * sender=0046700123456&text=ABC+test!&sessionid=1:1136364712521:0046700123456
      *
-     * @param array $data
      * @throws ReceiveException
-     * @return MessageInterface
      */
-    public function receivePremiumSmsMessage($data): MessageInterface
+    public function receivePremiumSmsMessage(array $data): MessageInterface
     {
         if (empty($data['country']) || empty($data['operator']) || empty($data['shortcode'])
              || empty($data['sender']) || empty($data['text']) || empty($data['sessionid'])
@@ -276,11 +262,9 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
      * Cellsynt example request: http://www.example.com/status.php?trackingid=e1066ca059
      * abb8661ffc059ed842c3cf&status=delivered
      *
-     * @param array $data
      * @throws ReceiveException
-     * @return DeliveryReportInterface
      */
-    public function receiveDeliveryReport($data): DeliveryReportInterface
+    public function receiveDeliveryReport(array $data): DeliveryReportInterface
     {
         if (empty($data['trackingid']) || empty($data['status'])) {
             throw new ReceiveException(sprintf(

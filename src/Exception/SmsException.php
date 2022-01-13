@@ -9,9 +9,6 @@
 
 namespace AnSms\Exception;
 
-/**
- * @author Andreas Nilsson <http://github.com/jandreasn>
- */
 class SmsException extends \RuntimeException
 {
 }

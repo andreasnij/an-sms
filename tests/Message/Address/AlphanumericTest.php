@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Message\Address;
+namespace AnSms\Tests\Message\Address;
 
 use AnSms\Message\Address\Alphanumeric;
 use PHPUnit\Framework\TestCase;
@@ -8,9 +8,9 @@ use PHPUnit\Framework\TestCase;
 class AlphanumericTest extends TestCase
 {
     /**
-     * @dataProvider createProvider
+     * @dataProvider alphanumericDataProvider
      */
-    public function testCanAlphanumericBeCreated(string $value, bool $expectException = false)
+    public function testCanAlphanumericBeCreated(string $value, bool $expectException = false): void
     {
         if ($expectException) {
             $this->expectException(\InvalidArgumentException::class);
@@ -22,7 +22,7 @@ class AlphanumericTest extends TestCase
         $this->assertSame($value, (string) $alphanumeric);
     }
 
-    public function createProvider(): array
+    public function alphanumericDataProvider(): array
     {
         return [
             ['abc123'],

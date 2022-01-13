@@ -14,13 +14,9 @@ use AnSms\Exception\SendException;
 use AnSms\Message\MessageInterface;
 use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 
-/**
- * @author Andreas Nilsson <http://github.com/jandreasn>
- */
 interface GatewayInterface
 {
     /**
-     * @param MessageInterface $message
      * @throws SendException
      */
     public function sendMessage(MessageInterface $message): void;
@@ -32,16 +28,12 @@ interface GatewayInterface
     public function sendMessages(array $messages): void;
 
     /**
-     * @param mixed $data
      * @throws ReceiveException
-     * @return MessageInterface
      */
-    public function receiveMessage($data): MessageInterface;
+    public function receiveMessage(array $data): MessageInterface;
 
     /**
-     * @param mixed $data
      * @throws ReceiveException
-     * @return DeliveryReportInterface
      */
-    public function receiveDeliveryReport($data): DeliveryReportInterface;
+    public function receiveDeliveryReport(array $data): DeliveryReportInterface;
 }

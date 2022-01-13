@@ -9,20 +9,10 @@
 
 namespace AnSms\Message\DeliveryReport;
 
-/**
- * @author Andreas Nilsson <http://github.com/jandreasn>
- */
 class DeliveryReport implements DeliveryReportInterface
 {
-    /**
-     * @var string
-     */
-    protected $id;
-
-    /**
-     * @var string
-     */
-    protected $status;
+    protected string $id;
+    protected string $status;
 
     public function __construct(string $id, string $status)
     {

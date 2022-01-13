@@ -13,12 +13,10 @@ use AnSms\Message\Address\Factory as AddressFactory;
 
 /**
  * Represents a SMS text message.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
  */
 class Message extends AbstractMessage
 {
-    public static function create(string $to, string $text, string $from = null): self
+    public static function create(string $to, string $text, ?string $from = null): self
     {
         return new self(
             AddressFactory::create($to),

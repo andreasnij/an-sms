@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Unit\Gateway\Provider;
+namespace AnSms\Tests\Gateway;
 
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
-use AnSms\Gateway\Provider\CellsyntGateway;
+use AnSms\Gateway\CellsyntGateway;
 use AnSms\Message\Address\AddressInterface;
 use AnSms\Message\Address\Alphanumeric;
 use AnSms\Message\Address\PhoneNumber;
@@ -12,50 +12,42 @@ use AnSms\Message\Address\ShortCode;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
 use AnSms\Message\PremiumMessage;
-use Http\Message\MessageFactory;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
 use Psr\Http\Message\RequestInterface;
-use Http\Adapter\Guzzle6\Client;
 use Psr\Http\Message\ResponseInterface;
 
 class CellsyntGatewayTest extends TestCase
 {
-    /**
-     * @var CellsyntGateway
-     */
-    private $gateway;
+    use HttpGatewayMocksTrait;
 
-    /**
-     * @var MessageFactory|MockObject
-     */
-    private $messageFactoryMock;
+    private CellsyntGateway $gateway;
 
-    /**
-     * @var Client|MockObject
-     */
-    private $clientMock;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->clientMock = $this->createMock(Client::class);
-        $this->messageFactoryMock = $this->createMock(MessageFactory::class);
+        $this->createHttpGatewayMocks();
 
         $this->gateway = new CellsyntGateway(
             'some-username',
             'some-password',
             $this->clientMock,
-            $this->messageFactoryMock
+            $this->requestFactoryMock,
+            $this->streamFactoryMock,
         );
     }
 
-    public function testCreateGatewayWithInvalidCredentials()
+    public function testCreateCellsyntGatewayWithInvalidCredentials(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        new CellsyntGateway('', '');
+        new CellsyntGateway(
+            '',
+            '',
+            $this->clientMock,
+            $this->requestFactoryMock,
+            $this->streamFactoryMock,
+        );
     }
 
-    public function testSendMessage()
+    public function testSendCellsyntMessage(): void
     {
         $message = Message::create('46700123001', 'Hello world!', '46700123456');
 
@@ -64,7 +56,7 @@ class CellsyntGatewayTest extends TestCase
         $url .= '&originatortype=numeric&originator=46700123456';
 
         $requestMock = $this->createMock(RequestInterface::class);
-        $this->messageFactoryMock->expects($this->once())
+        $this->requestFactoryMock->expects($this->once())
             ->method('createRequest')->with('GET', $url)->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
@@ -75,12 +67,12 @@ class CellsyntGatewayTest extends TestCase
         $this->gateway->sendMessage($message);
     }
 
-    public function testSendMessageGeneratesError()
+    public function testSendCellsyntMessageGeneratesError(): void
     {
         $messageMock = $this->createMock(MessageInterface::class);
 
         $requestMock = $this->createMock(RequestInterface::class);
-        $this->messageFactoryMock->method('createRequest')->willReturn($requestMock);
+        $this->requestFactoryMock->method('createRequest')->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
@@ -91,7 +83,7 @@ class CellsyntGatewayTest extends TestCase
         $this->gateway->sendMessage($messageMock);
     }
 
-    public function testSendPremiumSmsMessage()
+    public function testSendCellsyntPremiumSmsMessage(): void
     {
         $incomingMessage = Message::create('46700123001', 'Hello world!', '46700123456');
         $incomingMessage->setId('123');
@@ -102,7 +94,7 @@ class CellsyntGatewayTest extends TestCase
         $url .= '&text=Thank+you%21&charset=UTF-8&price=5&sessionid=123';
 
         $requestMock = $this->createMock(RequestInterface::class);
-        $this->messageFactoryMock->expects($this->once())
+        $this->requestFactoryMock->expects($this->once())
             ->method('createRequest')->with('GET', $url)->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
@@ -114,7 +106,7 @@ class CellsyntGatewayTest extends TestCase
     }
 
 
-    public function testSendMessages()
+    public function testSendCellsyntMessages(): void
     {
         $messages = [
             Message::create('46700123001', 'Hello world!'),
@@ -122,7 +114,7 @@ class CellsyntGatewayTest extends TestCase
         ];
 
         $requestMock = $this->createMock(RequestInterface::class);
-        $this->messageFactoryMock->method('createRequest')->willReturn($requestMock);
+        $this->requestFactoryMock->method('createRequest')->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->clientMock->expects($this->exactly(2))->method('sendRequest')->willReturn($responseMock);
@@ -132,7 +124,7 @@ class CellsyntGatewayTest extends TestCase
         $this->gateway->sendMessages($messages);
     }
 
-    public function testReceiveSmsMessage()
+    public function testReceiveCellsyntSmsMessage(): void
     {
         $to = '46700123001';
         $text = 'Hello!';
@@ -150,14 +142,14 @@ class CellsyntGatewayTest extends TestCase
         $this->assertSame($from, (string) $message->getFrom());
     }
 
-    public function testReceiveInvalidSmsMessage()
+    public function testReceiveCellsyntInvalidSmsMessage(): void
     {
         $this->expectException(ReceiveException::class);
 
         $this->gateway->receiveMessage([]);
     }
 
-    public function testReceivePremiumSmsMessage()
+    public function testReceiveCellsyntPremiumSmsMessage(): void
     {
         $to = '12345';
         $text = 'Hello!';
@@ -184,14 +176,14 @@ class CellsyntGatewayTest extends TestCase
         $this->assertSame($id, $message->getId());
     }
 
-    public function testReceiveInvalidPremiumSmsMessage()
+    public function testReceiveCellsyntInvalidPremiumSmsMessage(): void
     {
         $this->expectException(ReceiveException::class);
 
         $this->gateway->receiveMessage(['sessionid' => '123']);
     }
 
-    public function testReceiveDeliveryReport()
+    public function testReceiveCellsyntDeliveryReport(): void
     {
         $id = '12345';
         $status = 'delivered';
@@ -206,7 +198,7 @@ class CellsyntGatewayTest extends TestCase
         $this->assertSame($status, $deliveryReport->getStatus());
     }
 
-    public function testReceiveInvalidDeliveryReport()
+    public function testReceiveCellsyntInvalidDeliveryReport(): void
     {
         $this->expectException(ReceiveException::class);
 
@@ -214,10 +206,12 @@ class CellsyntGatewayTest extends TestCase
     }
 
     /**
-     * @dataProvider addressTypeProvider
+     * @dataProvider addressTypeDataProvider
      */
-    public function testGetOriginatorTypeReturnsCorrectType(AddressInterface $address, string $expectedType)
-    {
+    public function testGetCellsyntOriginatorTypeReturnsCorrectType(
+        AddressInterface $address,
+        string $expectedType
+    ): void {
         $reflectionClass = new \ReflectionClass(CellsyntGateway::class);
         $reflectionMethod = $reflectionClass->getMethod('getOriginatorType');
         $reflectionMethod->setAccessible(true);
@@ -226,7 +220,7 @@ class CellsyntGatewayTest extends TestCase
         $this->assertSame($expectedType, $type);
     }
 
-    public function addressTypeProvider(): array
+    public function addressTypeDataProvider(): array
     {
         return [
             [new PhoneNumber('46700123456'), 'numeric'],

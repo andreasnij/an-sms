@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests;
+namespace AnSms\Tests;
 
 use AnSms\Message\Address\PhoneNumber;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
 use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 use AnSms\Message\MessageInterface;
 use AnSms\SmsTransceiver;
@@ -14,22 +14,15 @@ use Psr\Log\LoggerInterface;
 
 class SmsTransceiverTest extends TestCase
 {
-    /**
-     * @var SmsTransceiver
-     */
-    private $transceiver;
+    private SmsTransceiver $transceiver;
 
-    /**
-     * @var GatewayInterface|MockObject
-     */
-    private $gatewayMock;
+    /** @var GatewayInterface&MockObject  */
+    private MockObject $gatewayMock;
 
-    /**
-     * @var LoggerInterface|MockObject
-     */
-    private $loggerMock;
+    /** @var LoggerInterface&MockObject  */
+    private MockObject $loggerMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->gatewayMock = $this->createMock(GatewayInterface::class);
         $this->loggerMock = $this->createMock(LoggerInterface::class);
@@ -37,7 +30,7 @@ class SmsTransceiverTest extends TestCase
         $this->transceiver = new SmsTransceiver($this->gatewayMock, $this->loggerMock);
     }
 
-    public function testSendMessage()
+    public function testSendMessage(): void
     {
         $this->gatewayMock->expects($this->once())->method('sendMessage');
         $this->loggerMock->expects($this->once())->method('info');
@@ -46,7 +39,7 @@ class SmsTransceiverTest extends TestCase
         $this->transceiver->sendMessage($message);
     }
 
-    public function testSendMessages()
+    public function testSendMessages(): void
     {
         $this->gatewayMock->expects($this->once())->method('sendMessages');
         $this->loggerMock->expects($this->exactly(2))->method('info');
@@ -58,7 +51,7 @@ class SmsTransceiverTest extends TestCase
         $this->transceiver->sendMessages($messages);
     }
 
-    public function testReceiveMessage()
+    public function testReceiveMessage(): void
     {
         $this->gatewayMock->expects($this->once())->method('receiveMessage');
         $this->loggerMock->expects($this->once())->method('info');
@@ -68,7 +61,7 @@ class SmsTransceiverTest extends TestCase
         $this->assertInstanceOf(MessageInterface::class, $message);
     }
 
-    public function testReceiveDeliveryReport()
+    public function testReceiveDeliveryReport(): void
     {
         $this->gatewayMock->expects($this->once())->method('receiveDeliveryReport');
         $this->loggerMock->expects($this->once())->method('info');
@@ -78,7 +71,7 @@ class SmsTransceiverTest extends TestCase
         $this->assertInstanceOf(DeliveryReportInterface::class, $deliveryReport);
     }
 
-    public function testSetDefaultFrom()
+    public function testSetDefaultFrom(): void
     {
         $defaultFrom = 'abcd';
         $this->transceiver->setDefaultFrom($defaultFrom);
@@ -88,7 +81,7 @@ class SmsTransceiverTest extends TestCase
         $this->assertSame($defaultFrom, (string) $message->getFrom());
     }
 
-    public function testSetDefaultFromWithAddress()
+    public function testSetDefaultFromWithAddress(): void
     {
         $defaultFrom = new PhoneNumber('46700123456');
         $this->transceiver->setDefaultFrom($defaultFrom);

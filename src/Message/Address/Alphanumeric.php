@@ -9,9 +9,6 @@
 
 namespace AnSms\Message\Address;
 
-/**
- * @author Andreas Nilsson <http://github.com/jandreasn>
- */
 class Alphanumeric extends AbstractAddress
 {
     public function __construct(string $alphanumeric)

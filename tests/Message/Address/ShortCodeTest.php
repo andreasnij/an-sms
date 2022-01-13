@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Message\Address;
+namespace AnSms\Tests\Message\Address;
 
 use AnSms\Message\Address\ShortCode;
 use PHPUnit\Framework\TestCase;
@@ -8,9 +8,9 @@ use PHPUnit\Framework\TestCase;
 class ShortCodeTest extends TestCase
 {
     /**
-     * @dataProvider createProvider
+     * @dataProvider shortCodeDataProvider
      */
-    public function testCanShortCodeBeCreated(string $value, bool $expectException = false)
+    public function testCanShortCodeBeCreated(string $value, bool $expectException = false): void
     {
         if ($expectException) {
             $this->expectException(\InvalidArgumentException::class);
@@ -22,7 +22,7 @@ class ShortCodeTest extends TestCase
         $this->assertSame($value, (string) $alphanumeric);
     }
 
-    public function createProvider(): array
+    public function shortCodeDataProvider(): array
     {
         return [
             ['12345'],

@@ -21,24 +21,15 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Send and receives SMS text messages.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
  */
 class SmsTransceiver implements SmsTransceiverInterface
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var GatewayInterface
-     */
-    protected $gateway;
+    protected GatewayInterface $gateway;
+    protected ?AddressInterface $defaultFrom = null;
 
-    /**
-     * @var AddressInterface|null
-     */
-    protected $defaultFrom;
-
-    public function __construct(GatewayInterface $gateway, LoggerInterface $logger = null)
+    public function __construct(GatewayInterface $gateway, ?LoggerInterface $logger = null)
     {
         $this->gateway = $gateway;
 
@@ -82,11 +73,9 @@ class SmsTransceiver implements SmsTransceiverInterface
     }
 
     /**
-     * @param mixed $data
-     * @return MessageInterface
      * @throws ReceiveException
      */
-    public function receiveMessage($data): MessageInterface
+    public function receiveMessage(array $data): MessageInterface
     {
         $message = $this->gateway->receiveMessage($data);
 
@@ -98,11 +87,9 @@ class SmsTransceiver implements SmsTransceiverInterface
     }
 
     /**
-     * @param mixed $data
-     * @return DeliveryReportInterface
      * @throws ReceiveException
      */
-    public function receiveDeliveryReport($data): DeliveryReportInterface
+    public function receiveDeliveryReport(array $data): DeliveryReportInterface
     {
         $deliveryReport = $this->gateway->receiveDeliveryReport($data);
 
@@ -113,10 +100,7 @@ class SmsTransceiver implements SmsTransceiverInterface
         return $deliveryReport;
     }
 
-    /**
-     * @param $defaultFrom AddressInterface|string|null
-     */
-    public function setDefaultFrom($defaultFrom): void
+    public function setDefaultFrom(AddressInterface|string|null $defaultFrom): void
     {
         $this->defaultFrom = null;
         if ($defaultFrom instanceof AddressInterface) {

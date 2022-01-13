@@ -13,8 +13,6 @@ use AnSms\Message\Address\AddressInterface;
 
 /**
  * Interface for a SMS text message.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
  */
 interface MessageInterface
 {

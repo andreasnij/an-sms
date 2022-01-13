@@ -1,86 +1,69 @@
 <?php
 
-namespace Tests\Unit\Gateway\Provider;
+namespace AnSms\Tests\Gateway;
 
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
-use AnSms\Gateway\Provider\NexmoGateway;
+use AnSms\Gateway\VonageGateway;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
-use Http\Message\MessageFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
-use Http\Adapter\Guzzle6\Client;
-use Nexmo\Client as NexmoClient;
-use Nexmo\Message\Client as NexmoMessageClient;
-use Nexmo\Message\Message as NexmoMessage;
-use Nexmo\Client\Exception\Exception as NexmoClientException;
+use Vonage\Client as VonageClient;
+use Vonage\Client\Exception\Exception as VonageClientException;
+use Vonage\Message\Client as VonageMessageClient;
+use Vonage\Message\Message as VonageMessage;
 
-class NexmoGatewayTest extends TestCase
+class VonageGatewayTest extends TestCase
 {
-    /** @var NexmoGateway */
-    private $gateway;
+    /** @var VonageMessageClient&MockObject  */
+    private MockObject $vonageMessageClientMock;
 
-    /** @var Client|MockObject */
-    private $clientMock;
+    private VonageGateway $gateway;
 
-    /** @var MessageFactory|MockObject */
-    private $messageFactoryMock;
-
-    /** @var NexmoClient|MockObject */
-    private $nexmoMessageClientMock;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->clientMock = $this->createMock(Client::class);
-        $this->messageFactoryMock = $this->createMock(MessageFactory::class);
+        $this->vonageMessageClientMock = $this->createMock(VonageMessageClient::class);
+        $vonageClientMock = $this->createMock(VonageClient::class);
+        $vonageClientMock->method('__call')->with('message')->willReturn($this->vonageMessageClientMock);
 
-        $this->nexmoMessageClientMock = $this->createMock(NexmoMessageClient::class);
-        $nexmoClientMock = $this->getMockBuilder(NexmoClient::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['message'])
-            ->getMock();
-        $nexmoClientMock->method('message')->willReturn($this->nexmoMessageClientMock);
-
-        $this->gateway = new NexmoGateway(
+        $this->gateway = new VonageGateway(
             'some-key',
             'some-secret',
-            $this->clientMock,
-            $this->messageFactoryMock,
-            $nexmoClientMock
+            $vonageClientMock,
         );
     }
 
-    public function testCreateGatewayWithInvalidCredentials()
+    public function testCreateVonageGatewayWithInvalidCredentials(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        new NexmoGateway('', '');
+        new VonageGateway('', '');
     }
 
-    public function testSendMessage()
+    public function testSendVonageMessage(): void
     {
         $message = Message::create('46700100000', 'Hello world!', '46700123456');
         $messageId = '123';
 
-        $nexmoMessageMock = $this->createMock(NexmoMessage::class);
-        $nexmoMessageMock->method('getMessageId')->willReturn($messageId);
+        $vonageMessageMock = $this->createMock(VonageMessage::class);
+        $vonageMessageMock->method('getMessageId')->willReturn($messageId);
 
-        $this->nexmoMessageClientMock
+        $this->vonageMessageClientMock
             ->expects($this->once())
             ->method('send')
-            ->willReturn($nexmoMessageMock);
+            ->willReturn($vonageMessageMock);
 
         $this->gateway->sendMessage($message);
 
         $this->assertSame($messageId, $message->getId());
     }
 
-    public function testSendMessageGeneratesError()
+    public function testSendVonageMessageGeneratesError(): void
     {
-        $this->nexmoMessageClientMock
+        $this->vonageMessageClientMock
             ->expects($this->once())
             ->method('send')
-            ->willThrowException(new NexmoClientException());
+            ->willThrowException(new VonageClientException());
 
         $this->expectException(SendException::class);
 
@@ -88,23 +71,23 @@ class NexmoGatewayTest extends TestCase
         $this->gateway->sendMessage($messageMock);
     }
 
-    public function testSendMessages()
+    public function testSendVonageMessages(): void
     {
         $messages = [
             Message::create('46700100000', 'Hello world!'),
             Message::create('46700100000', 'Hello world!'),
         ];
 
-        $nexmoMessageMock = $this->createMock(NexmoMessage::class);
-        $this->nexmoMessageClientMock
+        $vonageMessageMock = $this->createMock(VonageMessage::class);
+        $this->vonageMessageClientMock
             ->expects($this->exactly(2))
             ->method('send')
-            ->willReturn($nexmoMessageMock);
+            ->willReturn($vonageMessageMock);
 
         $this->gateway->sendMessages($messages);
     }
 
-    public function testReceiveSmsMessage()
+    public function testReceiveVonageSmsMessage(): void
     {
         $data = [
             'to' => ($to = '46700123001'),
@@ -120,14 +103,14 @@ class NexmoGatewayTest extends TestCase
         $this->assertSame($id, $message->getId());
     }
 
-    public function testReceiveInvalidSmsMessage()
+    public function testReceiveVonageInvalidSmsMessage(): void
     {
         $this->expectException(ReceiveException::class);
 
         $this->gateway->receiveMessage([]);
     }
 
-    public function testReceiveDeliveryReport()
+    public function testReceiveVonageDeliveryReport(): void
     {
         $id = '12345';
         $status = 'delivered';
@@ -142,7 +125,7 @@ class NexmoGatewayTest extends TestCase
         $this->assertSame($status, $deliveryReport->getStatus());
     }
 
-    public function testReceiveInvalidDeliveryReport()
+    public function testReceiveVonageInvalidDeliveryReport(): void
     {
         $this->expectException(ReceiveException::class);
 

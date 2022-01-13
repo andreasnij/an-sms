@@ -1,40 +1,25 @@
 <?php
 
-namespace Tests\Unit\Gateway\Provider;
+namespace AnSms\Tests\Gateway;
 
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
-use AnSms\Gateway\Provider\TelenorGateway;
+use AnSms\Gateway\TelenorGateway;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
-use Http\Message\MessageFactory;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
 use Psr\Http\Message\RequestInterface;
-use Http\Adapter\Guzzle6\Client;
 use Psr\Http\Message\ResponseInterface;
 
 class TelenorGatewayTest extends TestCase
 {
-    /**
-     * @var TelenorGateway
-     */
-    private $gateway;
+    use HttpGatewayMocksTrait;
 
-    /**
-     * @var MessageFactory|MockObject
-     */
-    private $messageFactoryMock;
+    private TelenorGateway$gateway;
 
-    /**
-     * @var Client|MockObject
-     */
-    private $clientMock;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->clientMock = $this->createMock(Client::class);
-        $this->messageFactoryMock = $this->createMock(MessageFactory::class);
+        $this->createHttpGatewayMocks();
 
         $this->gateway = new TelenorGateway(
             'some-username',
@@ -43,42 +28,47 @@ class TelenorGatewayTest extends TestCase
             'some-customer-password',
             null,
             $this->clientMock,
-            $this->messageFactoryMock
+            $this->requestFactoryMock,
+            $this->streamFactoryMock,
         );
     }
 
-    public function testCreateGatewayWithInvalidCredentials()
+    public function testCreateTelenorGatewayWithInvalidCredentials(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        new TelenorGateway('', '', '', '');
+        new TelenorGateway(
+            '',
+            '',
+            '',
+            '',
+            null,
+            $this->clientMock,
+            $this->requestFactoryMock,
+            $this->streamFactoryMock,
+        );
     }
 
-    public function testSendMessage()
+    public function testSendTelenorMessage(): void
     {
         $message = Message::create('46700123001', 'Hello world!', 'Testing');
 
         $url = 'https://sms-pro.net:44343/services/some-customer-id/sendsms';
-        $headers = ['Authorization' => 'Basic c29tZS11c2VybmFtZTpzb21lLXBhc3N3b3Jk'];
-        $body = '<?xml version="1.0" encoding="ISO-8859-1"?>'. "\n";
-        $body .= "<mobilectrl_sms><header><customer_id>some-customer-id</customer_id>"
-            . '<password>some-customer-password</password><from_alphanumeric>Testing</from_alphanumeric></header>'
-            . '<payload><sms><message><![CDATA[Hello world!]]></message><to_msisdn>+46700123001</to_msisdn></sms>'
-            . "</payload></mobilectrl_sms>\n";
-
 
         $requestMock = $this->createMock(RequestInterface::class);
-        $this->messageFactoryMock->expects($this->once())
-            ->method('createRequest')->with('POST', $url, $headers, $body)->willReturn($requestMock);
+        $requestMock->method('withHeader')->willReturnSelf();
+        $requestMock->method('withBody')->willReturnSelf();
+        $this->requestFactoryMock->expects($this->once())
+            ->method('createRequest')->with('POST', $url)->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
-        $responseMock->method('getBody')->willReturn($this->getSuccesfullResponseXml());
+        $responseMock->method('getBody')->willReturn($this->getSuccessfulResponseXml());
 
         $this->gateway->sendMessage($message);
     }
 
-    private function getSuccesfullResponseXml(): string
+    private function getSuccessfulResponseXml(): string
     {
         return '<mobilectrl_response>
                 <mobilectrl_id>5aa434:eac0a56a0b:-7ffe</mobilectrl_id>
@@ -86,12 +76,14 @@ class TelenorGatewayTest extends TestCase
             </mobilectrl_response>';
     }
 
-    public function testSendMessageGeneratesError()
+    public function testSendTelenorMessageGeneratesError(): void
     {
         $messageMock = $this->createMock(MessageInterface::class);
 
         $requestMock = $this->createMock(RequestInterface::class);
-        $this->messageFactoryMock->method('createRequest')->willReturn($requestMock);
+        $requestMock->method('withHeader')->willReturnSelf();
+        $requestMock->method('withBody')->willReturnSelf();
+        $this->requestFactoryMock->method('createRequest')->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
@@ -105,7 +97,7 @@ class TelenorGatewayTest extends TestCase
         $this->gateway->sendMessage($messageMock);
     }
 
-    public function testSendMessages()
+    public function testSendTelenorMessages(): void
     {
         $messages = [
             Message::create('46700123001', 'Hello world!'),
@@ -113,38 +105,40 @@ class TelenorGatewayTest extends TestCase
         ];
 
         $requestMock = $this->createMock(RequestInterface::class);
-        $this->messageFactoryMock->method('createRequest')->willReturn($requestMock);
+        $requestMock->method('withHeader')->willReturnSelf();
+        $requestMock->method('withBody')->willReturnSelf();
+        $this->requestFactoryMock->method('createRequest')->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->clientMock->expects($this->exactly(2))->method('sendRequest')->willReturn($responseMock);
 
-        $responseMock->method('getBody')->willReturn($this->getSuccesfullResponseXml());
+        $responseMock->method('getBody')->willReturn($this->getSuccessfulResponseXml());
 
         $this->gateway->sendMessages($messages);
     }
 
-    public function testReceiveDeliveryReport()
+    public function testReceiveTelenorDeliveryReport(): void
     {
         $id = '12345';
         $status = 'SMS SENT';
 
-        $data = "<mobilectrl_delivery_status>
+        $xml = "<mobilectrl_delivery_status>
              <mobilectrl_id>{$id}</mobilectrl_id>
              <status>0</status>
              <delivery_status>-2</delivery_status>
              <message>{$status}</message>
             </mobilectrl_delivery_status>";
 
-        $deliveryReport = $this->gateway->receiveDeliveryReport($data);
+        $deliveryReport = $this->gateway->receiveDeliveryReport(['xml' => $xml]);
 
         $this->assertSame($id, $deliveryReport->getId());
         $this->assertSame($status, $deliveryReport->getStatus());
     }
 
-    public function testReceiveInvalidDeliveryReport()
+    public function testReceiveTelenorInvalidDeliveryReport(): void
     {
         $this->expectException(ReceiveException::class);
 
-        $this->gateway->receiveDeliveryReport('');
+        $this->gateway->receiveDeliveryReport([]);
     }
 }

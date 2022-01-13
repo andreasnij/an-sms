@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Message\Address;
+namespace AnSms\Tests\Message\Address;
 
 use AnSms\Message\Address\PhoneNumber;
 use PHPUnit\Framework\TestCase;
@@ -8,10 +8,13 @@ use PHPUnit\Framework\TestCase;
 class PhoneNumberTest extends TestCase
 {
     /**
-     * @dataProvider createProvider
+     * @dataProvider phoneNumberDataProvider
      */
-    public function testCanPhoneNumberBeCreated(string $testPhoneNumber, bool $valid, string $expectedResult = null)
-    {
+    public function testCanPhoneNumberBeCreated(
+        string $testPhoneNumber,
+        bool $valid,
+        ?string $expectedResult = null
+    ): void {
         if (! $valid) {
             $this->expectException(\InvalidArgumentException::class);
         }
@@ -22,7 +25,7 @@ class PhoneNumberTest extends TestCase
         $this->assertSame($expectedResult, (string) $phoneNumber);
     }
 
-    public function createProvider(): array
+    public function phoneNumberDataProvider(): array
     {
         return [
             ['46700123456', true, '46700123456'],

@@ -10,53 +10,24 @@
 namespace AnSms\Message;
 
 use AnSms\Message\Address\AddressInterface;
+use InvalidArgumentException;
 
-/**
- * @author Andreas Nilsson <http://github.com/jandreasn>
- */
 abstract class AbstractMessage implements MessageInterface
 {
-    /**
-     * @var AddressInterface
-     */
-    protected $to;
-
-    /**
-     * @var string
-     */
-    protected $text;
-
-    /**
-     * @var AddressInterface|null
-     */
-    protected $from;
-
-    /**
-     * @var string|null
-     */
-    protected $id;
-
-    /**
-     * @var string|null
-     */
-    protected $operator;
-
-    /**
-     * @var string|null
-     */
-    protected $countryCode;
-
-    /**
-     * @var int|null
-     */
-    protected $segmentCount;
+    protected AddressInterface $to;
+    protected string $text;
+    protected ?AddressInterface $from;
+    protected ?string $id = null;
+    protected ?string $operator = null;
+    protected ?string $countryCode = null;
+    protected ?int $segmentCount = null;
 
     /**
      * @param AddressInterface      $to   The recipient's number
      * @param string                $text The message text contents
      * @param AddressInterface|null $from The message sender's number/name
      */
-    public function __construct(AddressInterface $to, string $text, AddressInterface $from = null)
+    public function __construct(AddressInterface $to, string $text, ?AddressInterface $from = null)
     {
         $this->to = $to;
         $this->setText($text);
@@ -76,7 +47,7 @@ abstract class AbstractMessage implements MessageInterface
     public function setText(string $text): void
     {
         if (empty($text)) {
-            throw new \InvalidArgumentException('Text is required');
+            throw new InvalidArgumentException('Text is required');
         }
 
         $this->text = $text;

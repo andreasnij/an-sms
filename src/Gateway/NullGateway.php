@@ -20,13 +20,10 @@ use AnSms\Message\MessageInterface;
  * Black hole gateway.
  *
  * Can be used for development/testing.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
  */
 class NullGateway implements GatewayInterface
 {
     /**
-     * @param MessageInterface $message
      * @throws SendException
      */
     public function sendMessage(MessageInterface $message): void
@@ -42,11 +39,9 @@ class NullGateway implements GatewayInterface
     }
 
     /**
-     * @param array $data
      * @throws ReceiveException
-     * @return MessageInterface
      */
-    public function receiveMessage($data): MessageInterface
+    public function receiveMessage(array $data): MessageInterface
     {
         $message = Message::create(
             $data['to'] ?? '46700000000',
@@ -60,11 +55,9 @@ class NullGateway implements GatewayInterface
     }
 
     /**
-     * @param array $data
      * @throws ReceiveException
-     * @return DeliveryReportInterface
      */
-    public function receiveDeliveryReport($data): DeliveryReportInterface
+    public function receiveDeliveryReport(array $data): DeliveryReportInterface
     {
         return new DeliveryReport(
             $data['trackingid'] ?? '',

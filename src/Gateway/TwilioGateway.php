@@ -7,40 +7,39 @@
  * @license   MIT
  */
 
-namespace AnSms\Gateway\Provider;
+namespace AnSms\Gateway;
 
-use AnSms\Gateway\GatewayInterface;
 use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
+use AnSms\Message\DeliveryReport\DeliveryReport;
+use AnSms\Message\DeliveryReport\DeliveryReportInterface;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
-use AnSms\Message\DeliveryReport\DeliveryReportInterface;
-use AnSms\Message\DeliveryReport\DeliveryReport;
-use Twilio\Rest\Client as TwilioClient;
+use InvalidArgumentException;
 use Twilio\Exceptions\TwilioException;
+use Twilio\Rest\Client as TwilioClient;
 use Twilio\Values;
 
 /**
- * Twilio SMS gateway provider.
- *
- * @author Andreas Nilsson <http://github.com/jandreasn>
+ * Twilio SMS gateway.
  */
 class TwilioGateway implements GatewayInterface
 {
-    /** @var TwilioClient $twilioClient */
-    protected $twilioClient;
+    protected TwilioClient $twilioClient;
 
     public function __construct(
         string $accountSid,
         string $authToken,
-        TwilioClient $twilioClient = null
+        ?TwilioClient $twilioClient = null
     ) {
         if (empty($accountSid) || empty($authToken)) {
-            throw new \InvalidArgumentException('Twilio Account SID and auth token are required');
+            throw new InvalidArgumentException('Twilio Account SID and auth token are required');
         }
 
-        $this->twilioClient = $twilioClient;
-        if ($twilioClient === null) {
+
+        if ($twilioClient) {
+            $this->twilioClient = $twilioClient;
+        } else {
             $this->twilioClient = new TwilioClient($accountSid, $authToken);
         }
     }
@@ -51,16 +50,15 @@ class TwilioGateway implements GatewayInterface
     }
 
     /**
-     * @param MessageInterface $message
      * @throws SendException
      */
     public function sendMessage(MessageInterface $message): void
     {
         try {
             $twilioMessage =  $this->twilioClient->messages->create(
-                $message->getTo(),
+                (string) $message->getTo(),
                 [
-                    'from' => $message->getFrom() ?: Values::NONE,
+                    'from' => $message->getFrom() ? (string) $message->getFrom() : Values::NONE,
                     'body' => $message->getText(),
                 ]
             );
@@ -83,11 +81,13 @@ class TwilioGateway implements GatewayInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @throws ReceiveException
      */
-    public function receiveMessage($data): MessageInterface
+    public function receiveMessage(array $data): MessageInterface
     {
-        if (empty($data['To']) || empty($data['Body']) || empty($data['From']) || empty($data['MessageSid'])) {
+        if (empty($data['To']) || empty($data['Body'])
+            || empty($data['From']) || empty($data['MessageSid'])
+        ) {
             throw new ReceiveException(sprintf(
                 'Invalid receive message data. Data received: %s',
                 var_export($data, true)
@@ -106,9 +106,9 @@ class TwilioGateway implements GatewayInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @throws ReceiveException
      */
-    public function receiveDeliveryReport($data): DeliveryReportInterface
+    public function receiveDeliveryReport(array $data): DeliveryReportInterface
     {
         if (empty($data['MessageSid']) || empty($data['MessageStatus'])) {
             throw new ReceiveException(sprintf(
