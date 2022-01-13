@@ -58,7 +58,7 @@ class TwilioGateway implements GatewayInterface
             $twilioMessage =  $this->twilioClient->messages->create(
                 (string) $message->getTo(),
                 [
-                    'from' => $message->getFrom() ?: Values::NONE,
+                    'from' => $message->getFrom() ? (string) $message->getFrom() : Values::NONE,
                     'body' => $message->getText(),
                 ]
             );
