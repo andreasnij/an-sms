@@ -1,6 +1,6 @@
 # AnSms - A PHP SMS library
 
-[![Version](http://img.shields.io/packagist/v/jandreasn/an-sms.svg?style=flat-square)](https://packagist.org/packages/jandreasn/an-sms)
+[![Version](http://img.shields.io/packagist/v/andreasnij/an-sms.svg?style=flat-square)](https://packagist.org/packages/andreasnij/an-sms)
 
 An extendable library for sending and receiving SMS messages. Currently comes packaged with these gateways:
 
@@ -21,7 +21,7 @@ You can add and use your own gateway. This library enables easy switching betwee
 ## Installation
 Add the package as a requirement to your `composer.json`:
 ```bash
-$ composer require jandreasn/an-sms guzzlehttp/guzzle:^7.0 guzzlehttp/psr7:^2.0
+$ composer require andreasnij/an-sms guzzlehttp/guzzle:^7.0 guzzlehttp/psr7:^2.0
 ```
 
 The `guzzlehttp/guzzle:^7.0 guzzlehttp/psr7:^2.0` part is optional depending on your environment. This package

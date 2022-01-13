@@ -1,5 +1,5 @@
 {
-    "name": "jandreasn/an-sms",
+    "name": "andreasnij/an-sms",
     "type": "library",
     "description": "A PHP library to send and receive SMS text messages through various gateways/providers.",
     "keywords": [
