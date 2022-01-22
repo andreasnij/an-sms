@@ -61,7 +61,7 @@ $gateway = new CellsyntGateway('username', 'password');
 $smsTransceiver = new SmsTransceiver($gateway);
 
 // Send SMS
-$message = Message::create('46700123456', 'Hello world!');
+$message = Message::create('46700000000', 'Hello world!');
 $smsTransceiver->sendMessage($message);
 
 // Receive SMS
