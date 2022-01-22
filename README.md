@@ -50,8 +50,6 @@ $ composer require vonage/client-core
 
 ## Usage
 ```php
-<?php
-
 use AnSms\{
     SmsTransceiver,
     Message\Message,
@@ -79,7 +77,6 @@ $premiumMessage = PremiumMessage::createFromIncomingMessage(
     $receivedMessage
 );
 $smsTransceiver->sendMessage($premiumMessage);
-
 ```
 
 ## Requirements
