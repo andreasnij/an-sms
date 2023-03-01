@@ -21,6 +21,7 @@ use Psr\Http\Client\ClientInterface;
 use Vonage\Client as VonageClient;
 use Vonage\Client\Credentials\Basic as VonageBasicCredentials;
 use Vonage\Client\Exception\Exception as VonageClientException;
+use Vonage\SMS\Message\SMS;
 
 /**
  * Vonage SMS gateway.
@@ -59,13 +60,15 @@ class VonageGateway implements GatewayInterface
     public function sendMessage(MessageInterface $message): void
     {
         try {
-            $vonageMessage = $this->vonageClient->message()->send([
-                'to' => (string) $message->getTo(),
-                'text' => $message->getText(),
-                'from' => $message->getFrom() ? (string) $message->getFrom() : null,
-            ]);
+            $vonageSms = new SMS(
+                (string) $message->getTo(),
+                (string) $message->getFrom(),
+                $message->getText()
+            );
 
-            if (($messageId = $vonageMessage->getMessageId())) {
+            $response = $this->vonageClient->sms()->send($vonageSms);
+
+            if (($messageId = $response->current()->getMessageId())) {
                 $message->setId($messageId);
             }
         } catch (ClientExceptionInterface | VonageClientException $e) {

@@ -7,30 +7,43 @@ use AnSms\Exception\SendException;
 use AnSms\Gateway\VonageGateway;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
+use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Vonage\Client as VonageClient;
-use Vonage\Client\Exception\Exception as VonageClientException;
-use Vonage\Message\Client as VonageMessageClient;
-use Vonage\Message\Message as VonageMessage;
+use Psr\Http\Client\ClientInterface;
 
 class VonageGatewayTest extends TestCase
 {
-    /** @var VonageMessageClient&MockObject  */
-    private MockObject $vonageMessageClientMock;
+    private const MOCK_RESPONSE_DATA = [
+        'message-count' => '1',
+        'messages' => [
+            [
+                'to' => '46700100000',
+                'message-id' => '123',
+                'status' => '0',
+                'remaining-balance' => '3.14159265',
+                'message-price' => '0.03330000',
+                'network' => '12345',
+                'client-ref' => 'my-personal-reference',
+                'account-ref' => 'customer1234',
+            ],
+        ]
+    ];
+
+    /** @var ClientInterface&MockObject  */
+    private MockObject $httpClientMock;
 
     private VonageGateway $gateway;
 
     protected function setUp(): void
     {
-        $this->vonageMessageClientMock = $this->createMock(VonageMessageClient::class);
-        $vonageClientMock = $this->createMock(VonageClient::class);
-        $vonageClientMock->method('__call')->with('message')->willReturn($this->vonageMessageClientMock);
+        $this->httpClientMock = $this->createMock(ClientInterface::class);
 
         $this->gateway = new VonageGateway(
             'some-key',
             'some-secret',
-            $vonageClientMock,
+            null,
+            $this->httpClientMock,
         );
     }
 
@@ -43,27 +56,25 @@ class VonageGatewayTest extends TestCase
     public function testSendVonageMessage(): void
     {
         $message = Message::create('46700100000', 'Hello world!', '46700123456');
-        $messageId = '123';
 
-        $vonageMessageMock = $this->createMock(VonageMessage::class);
-        $vonageMessageMock->method('getMessageId')->willReturn($messageId);
+        $mockResponse = new Response(200, [], (string) json_encode(self::MOCK_RESPONSE_DATA));
 
-        $this->vonageMessageClientMock
-            ->expects($this->once())
-            ->method('send')
-            ->willReturn($vonageMessageMock);
+        $this->httpClientMock->expects($this->once())
+            ->method('sendRequest')
+            ->willReturn($mockResponse);
 
         $this->gateway->sendMessage($message);
 
-        $this->assertSame($messageId, $message->getId());
+        $this->assertSame(self::MOCK_RESPONSE_DATA['messages'][0]['message-id'], $message->getId());
     }
 
     public function testSendVonageMessageGeneratesError(): void
     {
-        $this->vonageMessageClientMock
-            ->expects($this->once())
-            ->method('send')
-            ->willThrowException(new VonageClientException());
+        $mockResponse = new Response(500);
+
+        $this->httpClientMock->expects($this->once())
+            ->method('sendRequest')
+            ->willReturn($mockResponse);
 
         $this->expectException(SendException::class);
 
@@ -78,11 +89,13 @@ class VonageGatewayTest extends TestCase
             Message::create('46700100000', 'Hello world!'),
         ];
 
-        $vonageMessageMock = $this->createMock(VonageMessage::class);
-        $this->vonageMessageClientMock
+        $mockResponse = new Response(200, [], (string) json_encode(self::MOCK_RESPONSE_DATA));
+        $mockResponse2 = new Response(200, [], (string) json_encode(self::MOCK_RESPONSE_DATA));
+
+        $this->httpClientMock
             ->expects($this->exactly(2))
-            ->method('send')
-            ->willReturn($vonageMessageMock);
+            ->method('sendRequest')
+            ->willReturnOnConsecutiveCalls($mockResponse, $mockResponse2);
 
         $this->gateway->sendMessages($messages);
     }
