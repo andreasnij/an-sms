@@ -29,7 +29,7 @@ class CellsyntGatewayTest extends TestCase
         $this->gateway = new CellsyntGateway(
             'some-username',
             'some-password',
-            $this->clientMock,
+            $this->httpClientMock,
             $this->requestFactoryMock,
             $this->streamFactoryMock,
         );
@@ -41,7 +41,7 @@ class CellsyntGatewayTest extends TestCase
         new CellsyntGateway(
             '',
             '',
-            $this->clientMock,
+            $this->httpClientMock,
             $this->requestFactoryMock,
             $this->streamFactoryMock,
         );
@@ -60,7 +60,7 @@ class CellsyntGatewayTest extends TestCase
             ->method('createRequest')->with('GET', $url)->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
-        $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
+        $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
         $responseMock->method('getBody')->willReturn('OK: 12345');
 
@@ -75,7 +75,7 @@ class CellsyntGatewayTest extends TestCase
         $this->requestFactoryMock->method('createRequest')->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
-        $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
+        $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
         $responseMock->method('getBody')->willReturn('Error: Some error message');
 
@@ -98,7 +98,7 @@ class CellsyntGatewayTest extends TestCase
             ->method('createRequest')->with('GET', $url)->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
-        $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
+        $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
         $responseMock->method('getBody')->willReturn('OK: 12345');
 
@@ -117,7 +117,7 @@ class CellsyntGatewayTest extends TestCase
         $this->requestFactoryMock->method('createRequest')->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
-        $this->clientMock->expects($this->exactly(2))->method('sendRequest')->willReturn($responseMock);
+        $this->httpClientMock->expects($this->exactly(2))->method('sendRequest')->willReturn($responseMock);
 
         $responseMock->method('getBody')->willReturn('OK: 12345');
 
@@ -220,7 +220,7 @@ class CellsyntGatewayTest extends TestCase
         $this->assertSame($expectedType, $type);
     }
 
-    public function addressTypeDataProvider(): array
+    public static function addressTypeDataProvider(): array
     {
         return [
             [new PhoneNumber('46700123456'), 'numeric'],

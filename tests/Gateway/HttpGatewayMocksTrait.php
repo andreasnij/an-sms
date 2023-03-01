@@ -10,7 +10,7 @@ use Psr\Http\Message\StreamFactoryInterface;
 trait HttpGatewayMocksTrait
 {
     /** @var ClientInterface&MockObject  */
-    private MockObject $clientMock;
+    private MockObject $httpClientMock;
 
     /** @var RequestFactoryInterface&MockObject  */
     private MockObject $requestFactoryMock;
@@ -20,7 +20,7 @@ trait HttpGatewayMocksTrait
 
     protected function createHttpGatewayMocks(): void
     {
-        $this->clientMock = $this->createMock(ClientInterface::class);
+        $this->httpClientMock = $this->createMock(ClientInterface::class);
         $this->requestFactoryMock = $this->createMock(RequestFactoryInterface::class);
         $this->streamFactoryMock = $this->createMock(StreamFactoryInterface::class);
     }

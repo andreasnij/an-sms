@@ -24,7 +24,7 @@ class FortySixElksGatewayTest extends TestCase
         $this->gateway = new FortySixElksGateway(
             'some-username',
             'some-password',
-            $this->clientMock,
+            $this->httpClientMock,
             $this->requestFactoryMock,
             $this->streamFactoryMock,
         );
@@ -36,7 +36,7 @@ class FortySixElksGatewayTest extends TestCase
         new FortySixElksGateway(
             '',
             '',
-            $this->clientMock,
+            $this->httpClientMock,
             $this->requestFactoryMock,
             $this->streamFactoryMock,
         );
@@ -56,7 +56,7 @@ class FortySixElksGatewayTest extends TestCase
             ->method('createRequest')->with('POST', $url)->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
-        $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
+        $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
         $responseMock->method('getBody')->willReturn(json_encode([
             'status' => 'created',
@@ -85,7 +85,7 @@ class FortySixElksGatewayTest extends TestCase
         $this->requestFactoryMock->method('createRequest')->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
-        $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
+        $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
         $responseMock->method('getBody')->willReturn('Some error message');
 
@@ -104,7 +104,7 @@ class FortySixElksGatewayTest extends TestCase
         $this->requestFactoryMock->method('createRequest')->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
-        $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
+        $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
         $responseMock->method('getBody')->willReturn('{}');
 
@@ -123,7 +123,7 @@ class FortySixElksGatewayTest extends TestCase
         $this->requestFactoryMock->method('createRequest')->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
-        $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
+        $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
         $responseMock->method('getBody')->willReturn('{"status": "created"}');
 
@@ -145,7 +145,7 @@ class FortySixElksGatewayTest extends TestCase
         $this->requestFactoryMock->method('createRequest')->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
-        $this->clientMock->expects($this->exactly(2))->method('sendRequest')->willReturn($responseMock);
+        $this->httpClientMock->expects($this->exactly(2))->method('sendRequest')->willReturn($responseMock);
 
         $responseMock->method('getBody')->willReturn(json_encode([
             'status' => 'created',

@@ -27,7 +27,7 @@ class TelenorGatewayTest extends TestCase
             'some-customer-id',
             'some-customer-password',
             null,
-            $this->clientMock,
+            $this->httpClientMock,
             $this->requestFactoryMock,
             $this->streamFactoryMock,
         );
@@ -42,7 +42,7 @@ class TelenorGatewayTest extends TestCase
             '',
             '',
             null,
-            $this->clientMock,
+            $this->httpClientMock,
             $this->requestFactoryMock,
             $this->streamFactoryMock,
         );
@@ -61,7 +61,7 @@ class TelenorGatewayTest extends TestCase
             ->method('createRequest')->with('POST', $url)->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
-        $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
+        $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
         $responseMock->method('getBody')->willReturn($this->getSuccessfulResponseXml());
 
@@ -86,7 +86,7 @@ class TelenorGatewayTest extends TestCase
         $this->requestFactoryMock->method('createRequest')->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
-        $this->clientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
+        $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
         $responseBody = '<mobilectrl_response>
             <status>1</status>
@@ -110,7 +110,7 @@ class TelenorGatewayTest extends TestCase
         $this->requestFactoryMock->method('createRequest')->willReturn($requestMock);
 
         $responseMock = $this->createMock(ResponseInterface::class);
-        $this->clientMock->expects($this->exactly(2))->method('sendRequest')->willReturn($responseMock);
+        $this->httpClientMock->expects($this->exactly(2))->method('sendRequest')->willReturn($responseMock);
 
         $responseMock->method('getBody')->willReturn($this->getSuccessfulResponseXml());
 
