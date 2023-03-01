@@ -22,7 +22,7 @@ class AlphanumericTest extends TestCase
         $this->assertSame($value, (string) $alphanumeric);
     }
 
-    public function alphanumericDataProvider(): array
+    public static function alphanumericDataProvider(): array
     {
         return [
             ['abc123'],

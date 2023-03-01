@@ -25,7 +25,7 @@ class PhoneNumberTest extends TestCase
         $this->assertSame($expectedResult, (string) $phoneNumber);
     }
 
-    public function phoneNumberDataProvider(): array
+    public static function phoneNumberDataProvider(): array
     {
         return [
             ['46700123456', true, '46700123456'],

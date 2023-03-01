@@ -22,7 +22,7 @@ class ShortCodeTest extends TestCase
         $this->assertSame($value, (string) $alphanumeric);
     }
 
-    public function shortCodeDataProvider(): array
+    public static function shortCodeDataProvider(): array
     {
         return [
             ['12345'],
