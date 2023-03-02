@@ -1,5 +1,10 @@
 # Upgrading guide
 
+## 0.6 to 1.0
+- The minimum required PHP version is now 8.1. If you are still on PHP 8.0, you can use version
+  AnSms 0.6 until you upgrade.
+
+
 ## 0.5 to 0.6
 - If you previously installed the `php-http/guzzle6-adapter` and
   `php-http/message` packages when installing this package, remove
