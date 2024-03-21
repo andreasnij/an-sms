@@ -3,13 +3,12 @@
 namespace AnSms\Tests\Message\Address;
 
 use AnSms\Message\Address\ShortCode;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ShortCodeTest extends TestCase
 {
-    /**
-     * @dataProvider shortCodeDataProvider
-     */
+    #[DataProvider('shortCodeDataProvider')]
     public function testCanShortCodeBeCreated(string $value, bool $expectException = false): void
     {
         if ($expectException) {

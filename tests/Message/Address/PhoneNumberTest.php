@@ -3,13 +3,12 @@
 namespace AnSms\Tests\Message\Address;
 
 use AnSms\Message\Address\PhoneNumber;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class PhoneNumberTest extends TestCase
 {
-    /**
-     * @dataProvider phoneNumberDataProvider
-     */
+    #[DataProvider('phoneNumberDataProvider')]
     public function testCanPhoneNumberBeCreated(
         string $testPhoneNumber,
         bool $valid,

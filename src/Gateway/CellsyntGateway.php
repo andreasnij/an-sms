@@ -126,7 +126,7 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
     protected function parseSendResponseContent(string $content): string
     {
         // Cellsynt sends data as ISO 8859-1
-        $encodedContent = utf8_encode($content);
+        $encodedContent = mb_convert_encoding($content, 'UTF-8', 'ISO-8859-1');
 
         // Result syntax is one of these two:
         // OK:<space><tracking number>
@@ -213,7 +213,7 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
 
         $receivedMessage = Message::create(
             $data['destination'],
-            utf8_encode(trim($data['text'])), // Cellsynt sends data as ISO 8859-1
+            mb_convert_encoding(trim($data['text']), 'UTF-8', 'ISO-8859-1'), // Cellsynt sends data as ISO 8859-1
             $data['originator']
         );
 
@@ -245,7 +245,7 @@ class CellsyntGateway extends AbstractHttpGateway implements GatewayInterface
 
         $receivedMessage = Message::create(
             $data['shortcode'],
-            utf8_encode(trim($data['text'])), // Cellsynt sends data as ISO 8859-1
+            mb_convert_encoding(trim($data['text']), 'UTF-8', 'ISO-8859-1'), // Cellsynt sends data as ISO 8859-1
             ltrim($data['sender'], '0')
         );
 

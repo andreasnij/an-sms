@@ -12,9 +12,11 @@ use AnSms\Message\Address\ShortCode;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
 use AnSms\Message\PremiumMessage;
+use GuzzleHttp\Psr7\Utils;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CellsyntGatewayTest extends TestCase
 {
@@ -62,7 +64,7 @@ class CellsyntGatewayTest extends TestCase
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
-        $responseMock->method('getBody')->willReturn('OK: 12345');
+        $responseMock->method('getBody')->willReturn(Utils::streamFor('OK: 12345'));
 
         $this->gateway->sendMessage($message);
     }
@@ -77,7 +79,7 @@ class CellsyntGatewayTest extends TestCase
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
-        $responseMock->method('getBody')->willReturn('Error: Some error message');
+        $responseMock->method('getBody')->willReturn(Utils::streamFor('Error: Some error message'));
 
         $this->expectException(SendException::class);
         $this->gateway->sendMessage($messageMock);
@@ -100,7 +102,7 @@ class CellsyntGatewayTest extends TestCase
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
-        $responseMock->method('getBody')->willReturn('OK: 12345');
+        $responseMock->method('getBody')->willReturn(Utils::streamFor('OK: 12345'));
 
         $this->gateway->sendMessage($premiumMessage);
     }
@@ -119,7 +121,7 @@ class CellsyntGatewayTest extends TestCase
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->httpClientMock->expects($this->exactly(2))->method('sendRequest')->willReturn($responseMock);
 
-        $responseMock->method('getBody')->willReturn('OK: 12345');
+        $responseMock->method('getBody')->willReturn(Utils::streamFor('OK: 12345'));
 
         $this->gateway->sendMessages($messages);
     }
@@ -205,9 +207,7 @@ class CellsyntGatewayTest extends TestCase
         $this->gateway->receiveDeliveryReport([]);
     }
 
-    /**
-     * @dataProvider addressTypeDataProvider
-     */
+    #[DataProvider('addressTypeDataProvider')]
     public function testGetCellsyntOriginatorTypeReturnsCorrectType(
         AddressInterface $address,
         string $expectedType

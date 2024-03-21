@@ -24,7 +24,9 @@ class TwilioGatewayTest extends TestCase
     {
         $twilioClientMock = $this->createMock(TwilioClient::class);
         $this->twilioMessageListMock = $this->createMock(TwilioMessageList::class);
-        $twilioClientMock->messages = $this->twilioMessageListMock;
+        $twilioClientMock->method('__get')
+            ->with($this->equalTo('messages'))
+            ->willReturn($this->twilioMessageListMock);
 
         $this->gateway = new TwilioGateway(
             'some-account-sid',
@@ -45,7 +47,9 @@ class TwilioGatewayTest extends TestCase
         $messageId = '123';
 
         $twilioMessageMock = $this->createMock(TwilioMessage::class);
-        $twilioMessageMock->sid = $messageId;
+        $twilioMessageMock->method('__get')
+            ->with($this->equalTo('sid'))
+            ->willReturn($messageId);
 
         $this->twilioMessageListMock
             ->expects($this->once())

@@ -7,9 +7,11 @@ use AnSms\Exception\SendException;
 use AnSms\Gateway\TelenorGateway;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
+use GuzzleHttp\Psr7\Stream;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Psr7\Utils;
 
 class TelenorGatewayTest extends TestCase
 {
@@ -63,7 +65,7 @@ class TelenorGatewayTest extends TestCase
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
-        $responseMock->method('getBody')->willReturn($this->getSuccessfulResponseXml());
+        $responseMock->method('getBody')->willReturn(Utils::streamFor($this->getSuccessfulResponseXml()));
 
         $this->gateway->sendMessage($message);
     }
@@ -91,7 +93,7 @@ class TelenorGatewayTest extends TestCase
         $responseBody = '<mobilectrl_response>
             <status>1</status>
             </mobilectrl_response>';
-        $responseMock->method('getBody')->willReturn($responseBody);
+        $responseMock->method('getBody')->willReturn(Utils::streamFor($responseBody));
 
         $this->expectException(SendException::class);
         $this->gateway->sendMessage($messageMock);
@@ -112,7 +114,7 @@ class TelenorGatewayTest extends TestCase
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->httpClientMock->expects($this->exactly(2))->method('sendRequest')->willReturn($responseMock);
 
-        $responseMock->method('getBody')->willReturn($this->getSuccessfulResponseXml());
+        $responseMock->method('getBody')->willReturn(Utils::streamFor($this->getSuccessfulResponseXml()));
 
         $this->gateway->sendMessages($messages);
     }

@@ -3,13 +3,12 @@
 namespace AnSms\Tests\Message\Address;
 
 use AnSms\Message\Address\Alphanumeric;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AlphanumericTest extends TestCase
 {
-    /**
-     * @dataProvider alphanumericDataProvider
-     */
+    #[DataProvider('alphanumericDataProvider')]
     public function testCanAlphanumericBeCreated(string $value, bool $expectException = false): void
     {
         if ($expectException) {

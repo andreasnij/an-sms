@@ -7,6 +7,7 @@ use AnSms\Exception\SendException;
 use AnSms\Gateway\FortySixElksGateway;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
+use GuzzleHttp\Psr7\Utils;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -58,7 +59,7 @@ class FortySixElksGatewayTest extends TestCase
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
-        $responseMock->method('getBody')->willReturn(json_encode([
+        $responseMock->method('getBody')->willReturn(Utils::streamFor(json_encode([
             'status' => 'created',
             'direction' => 'outgoing',
             'from' => 'Forty6Elks',
@@ -68,7 +69,7 @@ class FortySixElksGatewayTest extends TestCase
             'cost' => 3500,
             'message' => 'Hello world!',
             'id' => 'a95b04cf23d7f94c508e675b38eb46934',
-        ]));
+        ])));
 
         $this->gateway->sendMessage($message);
         $this->assertEquals('a95b04cf23d7f94c508e675b38eb46934', $message->getId());
@@ -87,7 +88,7 @@ class FortySixElksGatewayTest extends TestCase
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
-        $responseMock->method('getBody')->willReturn('Some error message');
+        $responseMock->method('getBody')->willReturn(Utils::streamFor('Some error message'));
 
         $this->expectException(SendException::class);
         $this->expectExceptionMessage('Send message failed with error: Some error message');
@@ -106,7 +107,7 @@ class FortySixElksGatewayTest extends TestCase
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
-        $responseMock->method('getBody')->willReturn('{}');
+        $responseMock->method('getBody')->willReturn(Utils::streamFor('{}'));
 
         $this->expectException(SendException::class);
         $this->expectExceptionMessage('Send message failed with missing status value: {}');
@@ -125,7 +126,7 @@ class FortySixElksGatewayTest extends TestCase
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
 
-        $responseMock->method('getBody')->willReturn('{"status": "created"}');
+        $responseMock->method('getBody')->willReturn(Utils::streamFor('{"status": "created"}'));
 
         $this->expectException(SendException::class);
         $this->expectExceptionMessage('Message sent but missing id in response: {"status": "created"}');
@@ -147,7 +148,7 @@ class FortySixElksGatewayTest extends TestCase
         $responseMock = $this->createMock(ResponseInterface::class);
         $this->httpClientMock->expects($this->exactly(2))->method('sendRequest')->willReturn($responseMock);
 
-        $responseMock->method('getBody')->willReturn(json_encode([
+        $responseMock->method('getBody')->willReturn(Utils::streamFor(json_encode([
             'status' => 'created',
             'direction' => 'outgoing',
             'from' => 'Forty6Elks',
@@ -157,7 +158,7 @@ class FortySixElksGatewayTest extends TestCase
             'cost' => 3500,
             'message' => 'Hello world!',
             'id' => 'a95b04cf23d7f94c508e675b38eb46934',
-        ]));
+        ])));
 
         $this->gateway->sendMessages($messages);
     }
