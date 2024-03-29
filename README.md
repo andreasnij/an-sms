@@ -79,9 +79,6 @@ $premiumMessage = PremiumMessage::createFromIncomingMessage(
 $smsTransceiver->sendMessage($premiumMessage);
 ```
 
-## Requirements
-- Requires PHP 8.0 or above.
-
 ## Upgrading
 
 Please see [UPGRADING](UPGRADING.md) for details.
