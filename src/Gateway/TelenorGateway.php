@@ -41,6 +41,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
         ?ClientInterface $httpClient = null,
         ?RequestFactoryInterface $requestFactory = null,
         ?StreamFactoryInterface $streamFactory = null,
+        protected ?string $statusDeliveryUrl = null,
     ) {
         parent::__construct($httpClient, $requestFactory, $streamFactory);
 
@@ -96,6 +97,9 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
         }
         if ($this->supplementaryInformation !== null) {
             $header->appendChild($xml->createElement('sub_id_1', $this->supplementaryInformation));
+        }
+        if ($this->statusDeliveryUrl !== null) {
+            $header->appendChild($xml->createElement('status_delivery_url', $this->statusDeliveryUrl));
         }
         $mobileCtrlSms->appendChild($header);
 
