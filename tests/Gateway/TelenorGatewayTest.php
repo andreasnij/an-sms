@@ -32,6 +32,7 @@ class TelenorGatewayTest extends TestCase
             $this->httpClientMock,
             $this->requestFactoryMock,
             $this->streamFactoryMock,
+            null,
         );
     }
 
@@ -135,6 +136,49 @@ class TelenorGatewayTest extends TestCase
 
         $this->assertSame($id, $deliveryReport->getId());
         $this->assertSame($status, $deliveryReport->getStatus());
+    }
+
+    public function testSendTelenorMessageWithStatusDeliveryUrl(): void
+    {
+        $this->gateway = new TelenorGateway(
+            'some-username',
+            'some-password',
+            'some-customer-id',
+            'some-customer-password',
+            null,
+            $this->httpClientMock,
+            $this->requestFactoryMock,
+            $this->streamFactoryMock,
+            'https://example.com/api/sms/delivery',
+        );
+
+        $message = Message::create('46700123001', 'Hello world!', 'Testing');
+
+        $url = 'https://sms-pro.net:44343/services/some-customer-id/sendsms';
+
+        $this->streamFactoryMock->method('createStream')
+            ->with($this->callback(function ($body) {
+                $this->assertStringContainsString(
+                    '<status_delivery_url>https://example.com/api/sms/delivery</status_delivery_url>',
+                    $body
+                );
+
+                return true;
+            }))
+            ->willReturn($this->createMock(Stream::class));
+
+        $requestMock = $this->createMock(RequestInterface::class);
+        $requestMock->method('withHeader')->willReturnSelf();
+        $requestMock->method('withBody')->willReturnSelf();
+        $this->requestFactoryMock->expects($this->once())
+            ->method('createRequest')->with('POST', $url)->willReturn($requestMock);
+
+        $responseMock = $this->createMock(ResponseInterface::class);
+        $this->httpClientMock->expects($this->once())->method('sendRequest')->willReturn($responseMock);
+
+        $responseMock->method('getBody')->willReturn(Utils::streamFor($this->getSuccessfulResponseXml()));
+
+        $this->gateway->sendMessage($message);
     }
 
     public function testReceiveTelenorInvalidDeliveryReport(): void
