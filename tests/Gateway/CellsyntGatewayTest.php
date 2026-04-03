@@ -13,11 +13,13 @@ use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
 use AnSms\Message\PremiumMessage;
 use GuzzleHttp\Psr7\Utils;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 
+#[AllowMockObjectsWithoutExpectations]
 class CellsyntGatewayTest extends TestCase
 {
     use HttpGatewayMocksTrait;
@@ -220,6 +222,7 @@ class CellsyntGatewayTest extends TestCase
         $this->assertSame($expectedType, $type);
     }
 
+    /** @return array<int, array<mixed>> */
     public static function addressTypeDataProvider(): array
     {
         return [

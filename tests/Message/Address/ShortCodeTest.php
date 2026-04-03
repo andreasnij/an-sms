@@ -21,6 +21,7 @@ class ShortCodeTest extends TestCase
         $this->assertSame($value, (string) $alphanumeric);
     }
 
+    /** @return array<int, array<mixed>> */
     public static function shortCodeDataProvider(): array
     {
         return [

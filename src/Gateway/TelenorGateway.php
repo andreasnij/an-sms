@@ -163,6 +163,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
 
     /**
      * Not implemented/available.
+     * @param array<string, mixed> $data
      */
     public function receiveMessage(array $data): MessageInterface
     {
@@ -170,6 +171,7 @@ class TelenorGateway extends AbstractHttpGateway implements GatewayInterface
     }
 
     /**
+     * @param array<string, mixed> $data
      * @throws ReceiveException
      */
     public function receiveDeliveryReport(array $data): DeliveryReportInterface

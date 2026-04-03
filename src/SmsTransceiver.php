@@ -73,6 +73,7 @@ class SmsTransceiver implements SmsTransceiverInterface
     }
 
     /**
+     * @param array<string, mixed> $data
      * @throws ReceiveException
      */
     public function receiveMessage(array $data): MessageInterface
@@ -87,6 +88,7 @@ class SmsTransceiver implements SmsTransceiverInterface
     }
 
     /**
+     * @param array<string, mixed> $data
      * @throws ReceiveException
      */
     public function receiveDeliveryReport(array $data): DeliveryReportInterface

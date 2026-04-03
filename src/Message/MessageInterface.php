@@ -28,6 +28,7 @@ interface MessageInterface
 
     public function setFrom(?AddressInterface $from): void;
 
+    /** @return array<string, mixed> */
     public function getLogContext(): array;
 
     public function setId(string $id): void;

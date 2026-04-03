@@ -89,6 +89,7 @@ class PremiumMessage extends AbstractMessage implements PremiumMessageInterface
         return $this->incomingMessageId;
     }
 
+    /** @return array<string, mixed> */
     public function getLogContext(): array
     {
         return parent::getLogContext() + array_filter([

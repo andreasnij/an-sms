@@ -73,6 +73,9 @@ class SmsTransceiverTest extends TestCase
 
     public function testSetDefaultFrom(): void
     {
+        $this->gatewayMock->expects($this->once())->method('sendMessage');
+        $this->loggerMock->expects($this->once())->method('info');
+
         $defaultFrom = 'abcd';
         $this->transceiver->setDefaultFrom($defaultFrom);
         $message = Message::create('46700123456', 'Hello world!');
@@ -83,6 +86,9 @@ class SmsTransceiverTest extends TestCase
 
     public function testSetDefaultFromWithAddress(): void
     {
+        $this->gatewayMock->expects($this->once())->method('sendMessage');
+        $this->loggerMock->expects($this->once())->method('info');
+
         $defaultFrom = new PhoneNumber('46700123456');
         $this->transceiver->setDefaultFrom($defaultFrom);
         $message = Message::create('46700123456', 'Hello world!');

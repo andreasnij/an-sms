@@ -30,6 +30,7 @@ class DeliveryReport implements DeliveryReportInterface
         return $this->status;
     }
 
+    /** @return array<string, mixed> */
     public function getLogContext(): array
     {
         return [

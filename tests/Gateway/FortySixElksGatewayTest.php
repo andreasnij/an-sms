@@ -8,10 +8,12 @@ use AnSms\Gateway\FortySixElksGateway;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
 use GuzzleHttp\Psr7\Utils;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class FortySixElksGatewayTest extends TestCase
 {
     use HttpGatewayMocksTrait;

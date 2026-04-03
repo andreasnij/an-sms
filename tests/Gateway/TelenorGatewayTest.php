@@ -8,16 +8,18 @@ use AnSms\Gateway\TelenorGateway;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
 use GuzzleHttp\Psr7\Stream;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Psr7\Utils;
 
+#[AllowMockObjectsWithoutExpectations]
 class TelenorGatewayTest extends TestCase
 {
     use HttpGatewayMocksTrait;
 
-    private TelenorGateway$gateway;
+    private TelenorGateway $gateway;
 
     protected function setUp(): void
     {
@@ -156,7 +158,8 @@ class TelenorGatewayTest extends TestCase
 
         $url = 'https://sms-pro.net:44343/services/some-customer-id/sendsms';
 
-        $this->streamFactoryMock->method('createStream')
+        $this->streamFactoryMock->expects($this->once())
+            ->method('createStream')
             ->with($this->callback(function ($body) {
                 $this->assertStringContainsString(
                     '<status_delivery_url>https://example.com/api/sms/delivery</status_delivery_url>',

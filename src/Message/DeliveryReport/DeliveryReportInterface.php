@@ -15,5 +15,6 @@ interface DeliveryReportInterface
 
     public function getStatus() : string;
 
+    /** @return array<string, mixed> */
     public function getLogContext() : array;
 }

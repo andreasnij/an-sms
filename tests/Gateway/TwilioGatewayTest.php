@@ -6,6 +6,7 @@ use AnSms\Exception\ReceiveException;
 use AnSms\Exception\SendException;
 use AnSms\Gateway\TwilioGateway;
 use AnSms\Message\Message;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Twilio\Exceptions\TwilioException;
@@ -13,6 +14,7 @@ use Twilio\Rest\Api\V2010\Account\MessageInstance as TwilioMessage;
 use Twilio\Rest\Api\V2010\Account\MessageList as TwilioMessageList;
 use Twilio\Rest\Client as TwilioClient;
 
+#[AllowMockObjectsWithoutExpectations]
 class TwilioGatewayTest extends TestCase
 {
     /** @var TwilioMessageList&MockObject */
@@ -22,16 +24,15 @@ class TwilioGatewayTest extends TestCase
 
     protected function setUp(): void
     {
-        $twilioClientMock = $this->createMock(TwilioClient::class);
+        $twilioClientStub = $this->createStub(TwilioClient::class);
         $this->twilioMessageListMock = $this->createMock(TwilioMessageList::class);
-        $twilioClientMock->method('__get')
-            ->with($this->equalTo('messages'))
-            ->willReturn($this->twilioMessageListMock);
+        $twilioClientStub->method('__get')
+            ->willReturnCallback(fn($name) => $name === 'messages' ? $this->twilioMessageListMock : null);
 
         $this->gateway = new TwilioGateway(
             'some-account-sid',
             'some-auth-token',
-            $twilioClientMock
+            $twilioClientStub
         );
     }
 
@@ -46,15 +47,14 @@ class TwilioGatewayTest extends TestCase
         $message = Message::create('46700100000', 'Hello world!', '46700123456');
         $messageId = '123';
 
-        $twilioMessageMock = $this->createMock(TwilioMessage::class);
-        $twilioMessageMock->method('__get')
-            ->with($this->equalTo('sid'))
-            ->willReturn($messageId);
+        $twilioMessageStub = $this->createStub(TwilioMessage::class);
+        $twilioMessageStub->method('__get')
+            ->willReturnCallback(fn($name) => $name === 'sid' ? $messageId : null);
 
         $this->twilioMessageListMock
             ->expects($this->once())
             ->method('create')
-            ->willReturn($twilioMessageMock);
+            ->willReturn($twilioMessageStub);
 
         $this->gateway->sendMessage($message);
 
@@ -81,11 +81,14 @@ class TwilioGatewayTest extends TestCase
             Message::create('46700100000', 'Hello world!'),
         ];
 
-        $twilioMessageMock = $this->createMock(TwilioMessage::class);
+        $twilioMessageStub = $this->createStub(TwilioMessage::class);
+        $twilioMessageStub->method('__get')
+            ->willReturnCallback(fn($name) => $name === 'sid' ? '123' : null);
+
         $this->twilioMessageListMock
             ->expects($this->exactly(2))
             ->method('create')
-            ->willReturn($twilioMessageMock);
+            ->willReturn($twilioMessageStub);
 
         $this->gateway->sendMessages($messages);
     }

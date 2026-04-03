@@ -74,6 +74,7 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
         return 'Basic ' . base64_encode(sprintf('%s:%s', $this->apiUsername, $this->apiPassword));
     }
 
+    /** @return array<string, mixed> */
     protected function buildSendData(MessageInterface $message): array
     {
         return [
@@ -116,6 +117,7 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
     }
 
     /**
+     * @param array<string, mixed> $data
      * @throws ReceiveException
      */
     public function receiveMessage(array $data): MessageInterface
@@ -141,6 +143,7 @@ class FortySixElksGateway extends AbstractHttpGateway implements GatewayInterfac
     }
 
     /**
+     * @param array<string, mixed> $data
      * @throws ReceiveException
      */
     public function receiveDeliveryReport(array $data): DeliveryReportInterface

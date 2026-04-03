@@ -33,11 +33,13 @@ interface SmsTransceiverInterface extends LoggerAwareInterface
     public function sendMessages(array $messages): void;
 
     /**
+     * @param array<string, mixed> $data
      * @throws ReceiveException
      */
     public function receiveMessage(array $data) : MessageInterface;
 
     /**
+     * @param array<string, mixed> $data
      * @throws ReceiveException
      */
     public function receiveDeliveryReport(array $data) : DeliveryReportInterface;

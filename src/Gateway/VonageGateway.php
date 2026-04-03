@@ -88,6 +88,7 @@ class VonageGateway implements GatewayInterface
     }
 
     /**
+     * @param array<string, mixed> $data
      * @throws ReceiveException
      */
     public function receiveMessage(array $data): MessageInterface
@@ -113,6 +114,7 @@ class VonageGateway implements GatewayInterface
     }
 
     /**
+     * @param array<string, mixed> $data
      * @throws ReceiveException
      */
     public function receiveDeliveryReport(array $data): DeliveryReportInterface

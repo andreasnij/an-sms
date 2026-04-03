@@ -21,6 +21,7 @@ class AlphanumericTest extends TestCase
         $this->assertSame($value, (string) $alphanumeric);
     }
 
+    /** @return array<int, array<mixed>> */
     public static function alphanumericDataProvider(): array
     {
         return [

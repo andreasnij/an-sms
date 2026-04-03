@@ -39,6 +39,7 @@ class NullGateway implements GatewayInterface
     }
 
     /**
+     * @param array<string, mixed> $data
      * @throws ReceiveException
      */
     public function receiveMessage(array $data): MessageInterface
@@ -55,6 +56,7 @@ class NullGateway implements GatewayInterface
     }
 
     /**
+     * @param array<string, mixed> $data
      * @throws ReceiveException
      */
     public function receiveDeliveryReport(array $data): DeliveryReportInterface

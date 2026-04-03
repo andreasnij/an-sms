@@ -5,7 +5,7 @@ namespace AnSms\Tests\Message;
 use AnSms\Message\Address\AddressInterface;
 use AnSms\Message\MessageInterface;
 use AnSms\Message\PremiumMessage;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
 class PremiumMessageTest extends TestCase
@@ -30,7 +30,7 @@ class PremiumMessageTest extends TestCase
     {
         $price = 5;
         $text = 'Thank you!';
-        $incomingMessage = $this->createIncomingMessageMock();
+        $incomingMessage = $this->createIncomingMessageStub();
         $premiumMessage = PremiumMessage::createFromIncomingMessage($text, $price, $incomingMessage);
 
         $this->assertSame($price, $premiumMessage->getPrice());
@@ -39,17 +39,17 @@ class PremiumMessageTest extends TestCase
     }
 
     /**
-     * @return MessageInterface&MockObject
+     * @return MessageInterface&Stub
      */
-    private function createIncomingMessageMock(): MockObject
+    private function createIncomingMessageStub(): Stub
     {
-        $incomingMessageMock = $this->createMock(MessageInterface::class);
-        $incomingMessageMock->method('getTo')->willReturn($this->createMock(AddressInterface::class));
-        $incomingMessageMock->method('getFrom')->willReturn($this->createMock(AddressInterface::class));
+        $incomingMessageStub = $this->createStub(MessageInterface::class);
+        $incomingMessageStub->method('getTo')->willReturn($this->createStub(AddressInterface::class));
+        $incomingMessageStub->method('getFrom')->willReturn($this->createStub(AddressInterface::class));
         $incomingMessageId = '123';
-        $incomingMessageMock->method('getId')->willReturn($incomingMessageId);
+        $incomingMessageStub->method('getId')->willReturn($incomingMessageId);
 
-        return $incomingMessageMock;
+        return $incomingMessageStub;
     }
 
     public function testLogContext(): void
@@ -58,7 +58,7 @@ class PremiumMessageTest extends TestCase
         $premiumMessage = PremiumMessage::createFromIncomingMessage(
             'Thank you!',
             $price,
-            $this->createIncomingMessageMock()
+            $this->createIncomingMessageStub()
         );
 
         $this->assertSame($price, $premiumMessage->getLogContext()['price'] ?? null);

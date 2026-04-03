@@ -63,7 +63,11 @@ class TwilioGateway implements GatewayInterface
                 ]
             );
 
-            $message->setId($twilioMessage->sid);
+            $sid = $twilioMessage->sid;
+            if (empty($sid)) {
+                throw new SendException('Message sent but missing sid in response');
+            }
+            $message->setId($sid);
         } catch (TwilioException $e) {
             throw new SendException($e->getMessage(), 0, $e);
         }
@@ -81,6 +85,7 @@ class TwilioGateway implements GatewayInterface
     }
 
     /**
+     * @param array<string, mixed> $data
      * @throws ReceiveException
      */
     public function receiveMessage(array $data): MessageInterface
@@ -106,6 +111,7 @@ class TwilioGateway implements GatewayInterface
     }
 
     /**
+     * @param array<string, mixed> $data
      * @throws ReceiveException
      */
     public function receiveDeliveryReport(array $data): DeliveryReportInterface

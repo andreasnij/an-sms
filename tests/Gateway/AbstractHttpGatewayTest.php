@@ -9,8 +9,7 @@ class AbstractHttpGatewayTest extends TestCase
 {
     public function testThatAutoDiscoveryCreatesInstances(): void
     {
-        $httpGateway = $this->createMock(AbstractHttpGateway::class);
-        /** @var AbstractHttpGateway $httpGateway */
+        $httpGateway = new class extends AbstractHttpGateway {}; // @phpcs:ignore
 
         $this->assertNotEmpty($httpGateway->getHttpClient());
         $this->assertNotEmpty($httpGateway->getRequestFactory());

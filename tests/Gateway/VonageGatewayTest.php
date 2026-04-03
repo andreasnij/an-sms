@@ -8,10 +8,12 @@ use AnSms\Gateway\VonageGateway;
 use AnSms\Message\Message;
 use AnSms\Message\MessageInterface;
 use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 class VonageGatewayTest extends TestCase
 {
     private const MOCK_RESPONSE_DATA = [

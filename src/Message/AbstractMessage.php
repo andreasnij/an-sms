@@ -108,6 +108,7 @@ abstract class AbstractMessage implements MessageInterface
         $this->segmentCount = $segmentCount;
     }
 
+    /** @return array<string, mixed> */
     public function getLogContext(): array
     {
         return array_filter([
